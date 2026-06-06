@@ -23,6 +23,11 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   const isTenantOwner = typedRoles.some((r) => r.role === "tenant_owner");
   const isTenantMember = typedRoles.some((r) => r.role === "tenant_member");
+  const isSuperAdmin = typedRoles.some((r) => r.role === "super_admin");
+
+  if (isSuperAdmin) {
+    redirect("/admin");
+  }
 
   if (!isTenantOwner && !isTenantMember) {
     redirect("/dashboard");
