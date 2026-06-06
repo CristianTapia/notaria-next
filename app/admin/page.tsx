@@ -47,7 +47,7 @@ export default async function AdminPage() {
   const typedTenants = (tenants ?? []) as TenantRow[];
 
   return (
-    <main className="min-h-screen p-8">
+    <main className="p-8">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">Administración</h1>
       </div>

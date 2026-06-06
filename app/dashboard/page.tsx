@@ -27,7 +27,6 @@ export default async function DashboardPage() {
     .eq("user_id", user.id);
 
   console.log("SERVER ROLES", roles);
-  console.log("SERVER ROLES ERROR", rolesError?.message);
 
   if (rolesError) {
     throw new Error(rolesError.message);

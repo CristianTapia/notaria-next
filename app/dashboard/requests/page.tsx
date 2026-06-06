@@ -1,10 +1,15 @@
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import RequestStatusSelect from "./RequestStatusSelect";
+import RequestsRealtime from "./RequestsRealtime";
 
 type RoleRow = {
   role: string;
   tenant_id: string | null;
+};
+
+type RequestDocument = {
+  title: string;
 };
 
 type RequestRow = {
@@ -13,12 +18,18 @@ type RequestRow = {
   data: Record<string, unknown> | null;
   notes: string | null;
   created_at: string;
-  documents:
-    | {
-        title: string;
-      }[]
-    | null;
+  documents: {
+    title: string;
+  } | null;
 };
+
+function getDocumentTitle(documents: RequestRow["documents"]) {
+  if (Array.isArray(documents)) {
+    return documents[0]?.title ?? "Documento";
+  }
+
+  return documents?.title ?? "Documento";
+}
 
 export default async function DashboardRequestsPage() {
   const supabase = await createSupabaseServerClient();
@@ -60,11 +71,13 @@ export default async function DashboardRequestsPage() {
     throw new Error(error.message);
   }
 
-  const typedRequests = (requests ?? []) as RequestRow[];
+  const typedRequests = (requests ?? []) as unknown as RequestRow[];
 
   return (
     <main className="min-h-screen p-8">
       <h1 className="text-2xl font-bold">Solicitudes</h1>
+
+      <RequestsRealtime tenantId={tenantRole.tenant_id} />
 
       <div className="mt-6 space-y-4">
         {typedRequests.length === 0 ? (
@@ -72,11 +85,15 @@ export default async function DashboardRequestsPage() {
         ) : (
           typedRequests.map((request) => (
             <div key={request.id} className="rounded-xl border p-4">
-              <p className="font-semibold">{request.documents?.[0]?.title ?? "Documento"}</p>
+              <p className="font-semibold">{request.documents?.title ?? "Documento"}</p>
 
               <p className="text-sm text-gray-500">Estado: {request.status}</p>
 
-              <RequestStatusSelect requestId={request.id} initialStatus={request.status} />
+              <RequestStatusSelect
+                key={`${request.id}-${request.status}`}
+                requestId={request.id}
+                initialStatus={request.status}
+              />
 
               <p className="text-xs text-gray-400">{new Date(request.created_at).toLocaleString("es-ES")}</p>
 

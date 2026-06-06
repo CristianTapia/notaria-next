@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { deleteTenant, updateTenant } from "./actions";
+import TenantOwnerForm from "./TenantOwnerForm";
 
 type TenantRow = {
   id: string;
@@ -58,7 +59,6 @@ export default function TenantAdminCard({ tenant }: { tenant: TenantRow }) {
               Cambiar el nombre modificará el link público. El QR anterior dejará de funcionar y la notaría deberá
               imprimir un nuevo código QR.
             </p>
-
             <label className="mt-3 flex items-start gap-2">
               <input type="checkbox" name="confirmSlugChange" className="mt-1" required />
               <span>Entiendo que el link público cambiará y que será necesario generar/imprimir un nuevo QR.</span>
@@ -78,6 +78,7 @@ export default function TenantAdminCard({ tenant }: { tenant: TenantRow }) {
         <input type="hidden" name="id" value={tenant.id} />
         <button className="rounded-md border px-3 py-2 text-sm text-red-600">Eliminar</button>
       </form>
+      <TenantOwnerForm tenantId={tenant.id} />
     </div>
   );
 }

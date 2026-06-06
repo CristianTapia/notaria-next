@@ -121,3 +121,39 @@ export async function deleteTenant(formData: FormData) {
 
   revalidatePath("/admin");
 }
+
+export async function assignTenantOwner(formData: FormData) {
+  const tenantId = String(formData.get("tenantId") ?? "");
+  const email = String(formData.get("email") ?? "")
+    .trim()
+    .toLowerCase();
+
+  if (!tenantId) throw new Error("Tenant requerido");
+  if (!email) throw new Error("Correo requerido");
+
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+
+  const { data: invited, error: inviteError } = await supabaseAdmin.auth.admin.inviteUserByEmail(email, {
+    redirectTo: `${siteUrl}/auth/callback?next=/auth/update-password`,
+  });
+
+  if (inviteError) throw new Error(inviteError.message);
+
+  const userId = invited.user?.id;
+
+  if (!userId) {
+    throw new Error("No se pudo crear/invitar usuario");
+  }
+
+  const { error: roleError } = await supabaseAdmin.from("user_roles").insert({
+    user_id: userId,
+    tenant_id: tenantId,
+    role: "tenant_owner",
+  });
+
+  if (roleError && !roleError.message.toLowerCase().includes("duplicate")) {
+    throw new Error(roleError.message);
+  }
+
+  revalidatePath("/admin");
+}
