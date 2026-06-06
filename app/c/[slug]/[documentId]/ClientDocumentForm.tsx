@@ -60,7 +60,7 @@ export default function ClientDocumentForm({ doc, fields, slug }: { doc: Doc; fi
 
     const intervalId = window.setInterval(() => {
       refreshCurrentRequest();
-    }, 7000);
+    }, 30000);
 
     return () => {
       window.clearInterval(intervalId);
