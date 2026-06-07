@@ -51,3 +51,38 @@ textarea,
 select {
   font: inherit;
 }
+
+@media print {
+  html,
+  body {
+    background: #ffffff !important;
+  }
+
+  aside,
+  header,
+  nav,
+  button,
+  a,
+  .print\:hidden {
+    display: none !important;
+  }
+
+  main,
+  section {
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+  }
+
+  .print\:shadow-none {
+    box-shadow: none !important;
+  }
+
+  .print\:border-none {
+    border: none !important;
+  }
+
+  @page {
+    margin: 18mm;
+  }
+}

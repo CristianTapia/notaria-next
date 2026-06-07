@@ -1,11 +1,8 @@
 import { redirect } from "next/navigation";
+
+import { PageHeader } from "@/components/ui";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import QrGenerator from "./QrGenerator";
-
-type RoleRow = {
-  role: string;
-  tenant_id: string | null;
-};
 
 type TenantRow = {
   id: string;
@@ -30,17 +27,25 @@ export default async function QrPage() {
     redirect("/dashboard/requests");
   }
 
-  const { data: tenant } = await supabase
+  const { data: tenant, error } = await supabase
     .from("tenants")
     .select("id,name,slug")
     .eq("id", tenantRole.tenant_id)
     .single();
 
+  if (error) {
+    throw new Error(error.message);
+  }
+
   return (
-    <main className="p-8">
-      <h1 className="text-2xl font-bold">Códigos QR</h1>
+    <div>
+      <PageHeader
+        eyebrow="Portal cliente"
+        title="Código QR"
+        description={`Imprime este código para que los clientes puedan solicitar documentos de ${tenant.name}.`}
+      />
 
       <QrGenerator tenant={tenant as TenantRow} />
-    </main>
+    </div>
   );
 }

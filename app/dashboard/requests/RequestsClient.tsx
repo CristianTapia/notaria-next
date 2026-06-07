@@ -27,7 +27,7 @@ const FILTERS = [
   { value: "in_progress", label: "En proceso" },
   { value: "ready", label: "Listo" },
   { value: "archived", label: "Archivadas" },
-];
+] as const;
 
 export default function RequestsClient({ tenantId, requests }: { tenantId: string; requests: RequestRow[] }) {
   const [filter, setFilter] = useState("active");
@@ -66,6 +66,14 @@ export default function RequestsClient({ tenantId, requests }: { tenantId: strin
     return request.status === filter;
   });
 
+  const counts = {
+    active: requests.filter((request) => !["delivered", "cancelled"].includes(request.status)).length,
+    pending: requests.filter((request) => request.status === "pending").length,
+    in_progress: requests.filter((request) => request.status === "in_progress").length,
+    ready: requests.filter((request) => request.status === "ready").length,
+    archived: requests.filter((request) => ["delivered", "cancelled"].includes(request.status)).length,
+  };
+
   return (
     <div>
       <RequestsRealtime tenantId={tenantId} soundEnabled={soundEnabled} />
@@ -93,7 +101,10 @@ export default function RequestsClient({ tenantId, requests }: { tenantId: strin
                 : "bg-white/80 text-[var(--color-muted)] hover:bg-[var(--color-cream-input)]"
             }`}
           >
-            {item.label}
+            {item.label}{" "}
+            <span className={filter === item.value ? "text-white/70" : "text-[var(--color-muted)]"}>
+              ({counts[item.value]})
+            </span>
           </button>
         ))}
       </div>
