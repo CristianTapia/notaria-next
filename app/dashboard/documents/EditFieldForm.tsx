@@ -124,9 +124,9 @@ export default function EditFieldForm({ field }: { field: Field }) {
           <div className="flex shrink-0 gap-1">
             <Button
               type="button"
-              variant="ghost"
+              variant="icon"
               onClick={() => setEditing(true)}
-              className="h-10 w-10 px-0"
+              className="hover:text-gray-600"
               aria-label="Editar campo"
             >
               <Pencil size={22} strokeWidth={1.8} />
@@ -134,10 +134,10 @@ export default function EditFieldForm({ field }: { field: Field }) {
 
             <Button
               type="button"
-              variant="ghost"
+              variant="icon"
               onClick={remove}
               disabled={saving}
-              className="h-10 w-10 px-0 hover:text-red-600"
+              className="hover:text-red-600"
               aria-label="Eliminar campo"
             >
               <Trash2 size={22} strokeWidth={1.8} />

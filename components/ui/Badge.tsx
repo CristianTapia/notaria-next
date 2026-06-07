@@ -1,4 +1,4 @@
-type BadgeVariant = "gold" | "green" | "red" | "blue" | "neutral";
+type BadgeVariant = "gold" | "green" | "red" | "blue" | "neutral" | "navy";
 
 const variants: Record<BadgeVariant, string> = {
   gold: "bg-[#F5E9D6] text-[var(--color-navy)]",
@@ -6,6 +6,7 @@ const variants: Record<BadgeVariant, string> = {
   red: "bg-red-100 text-red-700",
   blue: "bg-blue-100 text-blue-700",
   neutral: "bg-slate-100 text-slate-600",
+  navy: "bg-[var(--color-navy)] text-white",
 };
 
 export function Badge({
@@ -19,7 +20,7 @@ export function Badge({
 }) {
   return (
     <span
-      className={`inline-flex items-center rounded-lg px-3 py-1 text-xs font-medium ${variants[variant]} ${className}`}
+      className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${variants[variant]} ${className}`}
     >
       {children}
     </span>
