@@ -4,7 +4,7 @@ import { Check, Pencil, Trash2, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { Badge, Button, Input } from "@/components/ui";
+import { Badge, Button, Input, Select } from "@/components/ui";
 import { supabase } from "@/lib/supabase";
 
 const FIELD_TYPES = [
@@ -159,18 +159,13 @@ export default function EditFieldForm({ field }: { field: Field }) {
         />
 
         <div className="flex min-w-0 flex-col gap-2 sm:flex-row">
-          <select
-            value={fieldType}
-            onChange={(e) => setFieldType(e.target.value)}
-            disabled={saving}
-            className="h-11 min-w-0 flex-1 rounded-lg border border-[#DCD5C7] bg-[var(--color-cream-input)] px-3 text-sm outline-none transition focus:border-[var(--color-navy)] focus:ring-4 focus:ring-[var(--color-navy)]/10 disabled:opacity-60"
-          >
+          <Select value={fieldType} onChange={(e) => setFieldType(e.target.value)} disabled={saving} className="flex-1">
             {FIELD_TYPES.map((type) => (
               <option key={type.value} value={type.value}>
                 {type.label}
               </option>
             ))}
-          </select>
+          </Select>
 
           <button
             type="button"

@@ -14,21 +14,21 @@ export function Switch({
       type="button"
       disabled={disabled}
       onClick={onClick}
-      className="inline-flex items-center gap-2 text-sm disabled:opacity-60"
+      className="inline-flex min-w-0 items-center gap-2 text-sm disabled:cursor-not-allowed disabled:opacity-60"
     >
       <span
-        className={`relative inline-flex h-6 w-11 rounded-full transition ${
-          checked ? "bg-[var(--color-navy)]" : "bg-slate-300"
+        className={`relative inline-flex h-6 w-11 shrink-0 rounded-full p-0.5 transition ${
+          checked ? "bg-[#D99027]/70" : "bg-slate-300"
         }`}
       >
         <span
-          className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition ${
-            checked ? "left-5" : "left-0.5"
+          className={`h-5 w-5 rounded-full bg-white shadow-sm transition-transform duration-200 ${
+            checked ? "translate-x-5" : "translate-x-0"
           }`}
         />
       </span>
 
-      {label && <span className="text-sm text-[var(--color-muted)]">{label}</span>}
+      {label && <span className="min-w-0 break-words text-sm text-[var(--color-muted)]">{label}</span>}
     </button>
   );
 }

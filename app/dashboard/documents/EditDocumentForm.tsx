@@ -3,7 +3,7 @@
 import { Check, Pencil, X } from "lucide-react";
 import { useState } from "react";
 
-import { Button, Input } from "@/components/ui";
+import { Button, Input, Textarea } from "@/components/ui";
 import { supabase } from "@/lib/supabase";
 
 export default function EditDocumentForm({
@@ -73,13 +73,12 @@ export default function EditDocumentForm({
           placeholder="Título del documento"
         />
 
-        <textarea
+        <Textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           disabled={saving}
           placeholder="Descripción"
           rows={2}
-          className="w-full rounded-lg border border-[#DCD5C7] bg-white px-3 py-2 text-sm outline-none transition focus:border-[var(--color-navy)] focus:ring-4 focus:ring-[var(--color-navy)]/10"
         />
 
         <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
