@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 
-import { Input } from "@/components/ui";
 import { supabase } from "@/lib/supabase";
 
 const STATUS_OPTIONS = [
@@ -44,12 +43,12 @@ export default function RequestStatusSelect({
   };
 
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
       <select
         value={status}
         onChange={(e) => updateStatus(e.target.value)}
         disabled={saving}
-        className="h-10 rounded-lg border border-[#DCD5C7] bg-[var(--color-cream-input)] px-3 text-sm outline-none transition focus:border-[var(--color-navy)] focus:ring-4 focus:ring-[var(--color-navy)]/10 disabled:opacity-60"
+        className="h-10 w-full min-w-0 rounded-lg border border-[#DCD5C7] bg-[var(--color-cream-input)] px-3 text-sm outline-none transition focus:border-[var(--color-navy)] focus:ring-4 focus:ring-[var(--color-navy)]/10 disabled:opacity-60 sm:w-auto"
       >
         {STATUS_OPTIONS.map((option) => (
           <option key={option.value} value={option.value}>

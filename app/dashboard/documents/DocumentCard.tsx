@@ -33,7 +33,7 @@ export default function DocumentCard({ doc }: { doc: DocumentRow }) {
 
   return (
     <Card>
-      <div className="flex items-start justify-between gap-4">
+      <div className="flex min-w-0 flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <button
           type="button"
           onClick={() => setOpen((prev) => !prev)}
@@ -48,20 +48,20 @@ export default function DocumentCard({ doc }: { doc: DocumentRow }) {
           </span>
 
           <div className="min-w-0">
-            <div className="flex items-center gap-2">
+            <div className="flex min-w-0 items-start gap-2">
               <FileText className="h-4 w-4 shrink-0 text-[var(--color-gold)]" />
               <h2 className="break-words text-base font-medium">{doc.title}</h2>
             </div>
 
             {doc.description && (
-              <p className="mt-1 line-clamp-2 text-sm text-[var(--color-muted)]">{doc.description}</p>
+              <p className="mt-1 line-clamp-2 break-words text-sm text-[var(--color-muted)]">{doc.description}</p>
             )}
 
             <p className="mt-1 text-xs text-[var(--color-muted)]">{doc.document_fields.length} campos configurados</p>
           </div>
         </button>
 
-        <div className="flex shrink-0 items-center gap-3">
+        <div className="flex shrink-0 flex-wrap items-center gap-3 sm:justify-end">
           <DocumentActiveToggle documentId={doc.id} initialActive={doc.active} />
 
           <EditDocumentForm documentId={doc.id} initialTitle={doc.title} initialDescription={doc.description} />
@@ -70,8 +70,8 @@ export default function DocumentCard({ doc }: { doc: DocumentRow }) {
 
       {open && (
         <div className="mt-5 space-y-4 border-t border-[var(--color-border)] pt-5">
-          <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-cream-input)] p-4">
-            <div className="flex items-center justify-between gap-4">
+          <div className="min-w-0 rounded-xl border border-[var(--color-border)] bg-[var(--color-cream-input)] p-3 sm:p-4">
+            <div className="flex min-w-0 flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
               <h3 className="text-sm font-medium">Campos del formulario</h3>
 
               <span className="text-xs text-[var(--color-muted)]">{doc.document_fields.length} campos</span>

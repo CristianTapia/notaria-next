@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Eye, EyeOff, Pencil, Trash2, X } from "lucide-react";
+import { Check, Pencil, Trash2, X } from "lucide-react";
 import { useMemo, useState } from "react";
 
 import { Button, Card, Input } from "@/components/ui";
@@ -48,27 +48,27 @@ export default function TenantAdminCard({ tenant }: { tenant: TenantRow }) {
         <input type="hidden" name="currentSlug" value={tenant.slug} />
         <input type="hidden" name="active" value={active ? "on" : ""} />
 
-        <div className="flex items-start justify-between gap-4">
+        <div className="flex min-w-0 flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0 flex-1">
             {editing ? (
               <Input name="name" required value={name} onChange={(e) => setName(e.target.value)} className="max-w-md" />
             ) : (
               <>
                 <input type="hidden" name="name" value={tenant.name} />
-                <h2 className="text-base font-medium">{tenant.name}</h2>
+                <h2 className="break-words text-base font-medium">{tenant.name}</h2>
               </>
             )}
 
             <div className="mt-1 space-y-1 text-xs text-[var(--color-muted)]">
-              <p className="font-mono">/c/{tenant.slug}</p>
+              <p className="break-all font-mono">/c/{tenant.slug}</p>
 
               {slugWillChange && (
-                <p className="font-mono text-[var(--color-gold)]">Nuevo: /c/{nextSlug || tenant.slug}</p>
+                <p className="break-all font-mono text-[var(--color-gold)]">Nuevo: /c/{nextSlug || tenant.slug}</p>
               )}
             </div>
           </div>
 
-          <div className="flex shrink-0 items-center gap-2">
+          <div className="flex shrink-0 items-center gap-2 sm:justify-end">
             {!editing && (
               <>
                 <Button
@@ -97,23 +97,23 @@ export default function TenantAdminCard({ tenant }: { tenant: TenantRow }) {
         {slugWillChange && (
           <div className="rounded-xl border border-[#EAC77E] bg-[#FFF8E8] p-3 text-sm text-[#7A4A00]">
             <p className="font-medium">Advertencia</p>
-            <p className="mt-1">Cambiar el nombre modificará el link público. El QR anterior dejará de funcionar.</p>
+            <p className="mt-1 break-words">Cambiar el nombre modificará el link público. El QR anterior dejará de funcionar.</p>
 
             <label className="mt-3 flex items-start gap-2">
               <input type="checkbox" name="confirmSlugChange" className="mt-1" required />
-              <span>Entiendo que será necesario generar/imprimir un nuevo QR.</span>
+              <span className="min-w-0 break-words">Entiendo que será necesario generar/imprimir un nuevo QR.</span>
             </label>
           </div>
         )}
 
         {editing && (
-          <div className="flex flex-wrap gap-2">
-            <Button>
+          <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+            <Button className="w-full sm:w-auto">
               <Check className="h-4 w-4" />
               Guardar cambios
             </Button>
 
-            <Button type="button" variant="secondary" onClick={cancelEdit}>
+            <Button type="button" variant="secondary" onClick={cancelEdit} className="w-full sm:w-auto">
               <X className="h-4 w-4" />
               Cancelar
             </Button>

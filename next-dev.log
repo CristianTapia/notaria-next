@@ -1,0 +1,42 @@
+
+> notaria-next@0.1.0 dev
+> next dev
+
+▲ Next.js 16.2.7 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.56.1:3000
+- Environments: .env
+✓ Ready in 837ms
+Creating turbopack project { dir: 'C:\\Users\\ctapi\\Desktop\\notaria-next', testMode: true }
+
+ GET /login 200 in 929ms (next.js: 617ms, application-code: 311ms)
+ GET /c/not-found-responsive-check 200 in 2.9s (next.js: 1608ms, application-code: 1269ms)
+ GET /login 200 in 174ms (next.js: 14ms, application-code: 160ms)
+ GET /login 200 in 113ms (next.js: 7ms, application-code: 106ms)
+ GET /login 200 in 200ms (next.js: 8ms, application-code: 192ms)
+ GET /login 200 in 42ms (next.js: 4ms, application-code: 38ms)
+ GET /login 200 in 46ms (next.js: 5ms, application-code: 41ms)
+ GET /c/not-found-responsive-check 200 in 499ms (next.js: 42ms, application-code: 456ms)
+ GET /c/not-found-responsive-check 200 in 362ms (next.js: 15ms, application-code: 347ms)
+✓ Compiled in 4.9s
+ GET /login 200 in 278ms (next.js: 97ms, application-code: 182ms)
+ GET /login 200 in 117ms (next.js: 13ms, application-code: 105ms)
+ GET /login 200 in 116ms (next.js: 14ms, application-code: 103ms)
+ GET /login 200 in 779ms (next.js: 29ms, application-code: 750ms)
+ GET /login 200 in 528ms (next.js: 10ms, application-code: 518ms)
+ GET /login 200 in 180ms (next.js: 25ms, application-code: 156ms)
+ GET /c/not-found-responsive-check 200 in 1568ms (next.js: 349ms, application-code: 1218ms)
+ GET /c/not-found-responsive-check 200 in 325ms (next.js: 19ms, application-code: 306ms)
+ GET /login 200 in 108ms (next.js: 9ms, application-code: 99ms)
+ GET /dashboard/requests 200 in 1962ms (next.js: 274ms, application-code: 1688ms)
+ GET /c/notaria-mauro/23207d27-785b-42b7-b351-b80ac778a795 200 in 2.2s (next.js: 1287ms, application-code: 884ms)
+ GET /c/notaria-mauro 200 in 700ms (next.js: 39ms, application-code: 661ms)
+ GET /c/notaria-mauro/97c4d66d-f2a4-4d2a-968c-d36a76cbaa2e 200 in 758ms (next.js: 20ms, application-code: 739ms)
+ GET /dashboard/requests 200 in 933ms (next.js: 15ms, application-code: 918ms)
+ GET /dashboard/requests 200 in 862ms (next.js: 4ms, application-code: 858ms)
+ GET /dashboard/requests 200 in 22ms (next.js: 9ms, application-code: 13ms)
+ GET /dashboard/requests 200 in 895ms (next.js: 4ms, application-code: 892ms)
+ GET /dashboard/requests 200 in 860ms (next.js: 4ms, application-code: 856ms)
+ GET /dashboard/requests 200 in 894ms (next.js: 11ms, application-code: 883ms)
+ GET /dashboard/requests 200 in 826ms (next.js: 10ms, application-code: 816ms)
+ GET /c/notaria-mauro 200 in 673ms (next.js: 30ms, application-code: 642ms)

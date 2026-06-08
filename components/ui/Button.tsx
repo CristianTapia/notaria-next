@@ -23,7 +23,7 @@ export function Button({
       {...props}
       className={`inline-flex items-center justify-center gap-2 rounded-lg text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-60 ${
         isIcon ? "" : "h-10 px-4"
-      } ${variants[variant]} ${className}`}
+      } max-w-full text-center ${variants[variant]} ${className}`}
     >
       {children}
     </button>

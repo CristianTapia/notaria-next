@@ -110,8 +110,8 @@ export default function EditFieldForm({ field }: { field: Field }) {
 
   if (!editing) {
     return (
-      <li className="rounded-xl border border-[var(--color-border)] bg-white p-3">
-        <div className="flex items-start justify-between gap-3">
+      <li className="min-w-0 rounded-xl border border-[var(--color-border)] bg-white p-3">
+        <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
             <p className="break-words text-sm font-medium">{field.label}</p>
 
@@ -121,7 +121,7 @@ export default function EditFieldForm({ field }: { field: Field }) {
             </div>
           </div>
 
-          <div className="flex shrink-0 gap-1">
+          <div className="flex shrink-0 gap-1 sm:justify-end">
             <Button
               type="button"
               variant="icon"
@@ -149,7 +149,7 @@ export default function EditFieldForm({ field }: { field: Field }) {
   }
 
   return (
-    <li className="rounded-xl border border-[var(--color-border)] bg-white p-4">
+    <li className="min-w-0 rounded-xl border border-[var(--color-border)] bg-white p-3 sm:p-4">
       <div className="space-y-3">
         <Input
           value={label}
@@ -158,12 +158,12 @@ export default function EditFieldForm({ field }: { field: Field }) {
           placeholder="Texto de la pregunta"
         />
 
-        <div className="flex gap-2">
+        <div className="flex min-w-0 flex-col gap-2 sm:flex-row">
           <select
             value={fieldType}
             onChange={(e) => setFieldType(e.target.value)}
             disabled={saving}
-            className="h-11 flex-1 rounded-lg border border-[#DCD5C7] bg-[var(--color-cream-input)] px-3 text-sm outline-none transition focus:border-[var(--color-navy)] focus:ring-4 focus:ring-[var(--color-navy)]/10 disabled:opacity-60"
+            className="h-11 min-w-0 flex-1 rounded-lg border border-[#DCD5C7] bg-[var(--color-cream-input)] px-3 text-sm outline-none transition focus:border-[var(--color-navy)] focus:ring-4 focus:ring-[var(--color-navy)]/10 disabled:opacity-60"
           >
             {FIELD_TYPES.map((type) => (
               <option key={type.value} value={type.value}>
@@ -202,13 +202,13 @@ export default function EditFieldForm({ field }: { field: Field }) {
           />
         )}
 
-        <div className="flex flex-wrap gap-2">
-          <Button type="button" onClick={save} disabled={saving}>
+        <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+          <Button type="button" onClick={save} disabled={saving} className="w-full sm:w-auto">
             <Check className="h-4 w-4" />
             {saving ? "Guardando..." : "Guardar pregunta"}
           </Button>
 
-          <Button type="button" variant="secondary" onClick={cancelEdit} disabled={saving}>
+          <Button type="button" variant="secondary" onClick={cancelEdit} disabled={saving} className="w-full sm:w-auto">
             <X className="h-4 w-4" />
             Cancelar
           </Button>

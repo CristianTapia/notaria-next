@@ -13,13 +13,6 @@ type Field = {
   options: string[] | null;
 };
 
-type Doc = {
-  id: string;
-  title: string;
-  description: string | null;
-  tenant_id: string;
-};
-
 export default async function DocumentPage({ params }: { params: Promise<{ slug: string; documentId: string }> }) {
   const { slug, documentId } = await params;
 
@@ -42,16 +35,16 @@ export default async function DocumentPage({ params }: { params: Promise<{ slug:
 
   if (!tenant || !doc) {
     return (
-      <main className="min-h-screen bg-[var(--color-bg)] px-6 py-12">
-        <div className="mx-auto flex min-h-[70vh] max-w-md items-center justify-center text-center">
-          <div>
+      <main className="min-h-screen overflow-x-hidden bg-[var(--color-bg)] px-4 py-10 sm:px-6 sm:py-12">
+        <div className="mx-auto flex min-h-[70vh] w-full max-w-[calc(100vw-2rem)] items-center justify-center text-center sm:max-w-md">
+          <div className="min-w-0">
             <div className="mx-auto mb-4 grid h-12 w-12 place-items-center rounded-full bg-[var(--color-gold)]/10 text-[var(--color-gold)]">
               <ScrollText className="h-5 w-5" />
             </div>
 
-            <h1 className="text-2xl font-normal tracking-[-0.03em]">Documento no disponible</h1>
+            <h1 className="break-words text-2xl font-normal">Documento no disponible</h1>
 
-            <p className="mt-2 text-sm text-[var(--color-muted)]">
+            <p className="mt-2 break-words text-sm text-[var(--color-muted)]">
               Este documento ya no está disponible o el enlace cambió.
             </p>
 
@@ -68,15 +61,15 @@ export default async function DocumentPage({ params }: { params: Promise<{ slug:
   }
 
   return (
-    <main className="min-h-screen bg-[var(--color-bg)]">
+    <main className="min-h-screen overflow-x-hidden bg-[var(--color-bg)]">
       <header className="border-b border-[var(--color-border)] bg-white/50">
-        <div className="mx-auto flex max-w-3xl items-center gap-2 px-6 py-4">
+        <div className="mx-auto flex min-w-0 max-w-3xl items-center gap-2 px-4 py-4 sm:px-6">
           <ScrollText className="h-5 w-5 text-[var(--color-gold)]" />
-          <p className="text-base font-medium">{tenant.name}</p>
+          <p className="min-w-0 break-words text-base font-medium">{tenant.name}</p>
         </div>
       </header>
 
-      <section className="mx-auto max-w-2xl px-6 py-10">
+      <section className="mx-auto min-w-0 max-w-2xl px-4 py-8 sm:px-6 sm:py-10">
         <Link
           href={`/c/${slug}`}
           className="inline-flex items-center gap-2 text-sm text-[var(--color-muted)] transition hover:text-[var(--color-navy)]"
@@ -85,10 +78,10 @@ export default async function DocumentPage({ params }: { params: Promise<{ slug:
           Otros documentos
         </Link>
 
-        <div className="mt-8">
-          <h1 className="text-4xl font-normal tracking-[-0.04em]">{doc.title}</h1>
+        <div className="mt-8 min-w-0">
+          <h1 className="break-words text-3xl font-normal sm:text-4xl">{doc.title}</h1>
 
-          {doc.description && <p className="mt-4 text-sm leading-6 text-[var(--color-muted)]">{doc.description}</p>}
+          {doc.description && <p className="mt-4 break-words text-sm leading-6 text-[var(--color-muted)]">{doc.description}</p>}
         </div>
 
         <ClientDocumentForm doc={doc} fields={(fields as Field[] | null) ?? []} slug={slug} />

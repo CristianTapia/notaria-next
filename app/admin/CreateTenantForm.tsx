@@ -38,7 +38,7 @@ export default function CreateTenantForm() {
   return (
     <Card>
       <form action={submitAction}>
-        <div className="grid gap-3 md:grid-cols-[1fr_auto]">
+        <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
           <Input
             name="name"
             required
@@ -48,7 +48,7 @@ export default function CreateTenantForm() {
             placeholder="Nombre de la notaría"
           />
 
-          <div className="flex h-11 items-center rounded-lg border border-[#DCD5C7] bg-[var(--color-cream-input)] px-4 font-mono text-sm text-[var(--color-muted)]">
+          <div className="flex min-h-11 min-w-0 items-center rounded-lg border border-[#DCD5C7] bg-[var(--color-cream-input)] px-4 font-mono text-sm break-all text-[var(--color-muted)]">
             /c/{slugPreview || "slug-url"}
           </div>
         </div>
@@ -59,9 +59,9 @@ export default function CreateTenantForm() {
               state.ok ? "border-green-200 bg-green-50 text-green-700" : "border-red-200 bg-red-50 text-red-700"
             }`}
           >
-            <div className="flex items-center gap-2">
+            <div className="flex min-w-0 items-start gap-2">
               {state.ok && <CheckCircle2 className="h-4 w-4" />}
-              <span>
+              <span className="min-w-0 break-words">
                 {state.message}
                 {state.ok && state.createdName ? `: ${state.createdName}` : ""}
               </span>
@@ -70,7 +70,7 @@ export default function CreateTenantForm() {
         )}
 
         <div className="mt-4">
-          <Button type="submit" disabled={pending}>
+          <Button type="submit" disabled={pending} className="w-full sm:w-auto">
             <Plus className="h-4 w-4" />
             {pending ? "Creando..." : "Crear notaría"}
           </Button>

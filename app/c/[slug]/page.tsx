@@ -22,16 +22,16 @@ export default async function ClientListPage({ params }: { params: Promise<{ slu
 
   if (!tenant) {
     return (
-      <main className="min-h-screen bg-[var(--color-bg)] px-6 py-12">
-        <div className="mx-auto flex min-h-[70vh] max-w-md items-center justify-center text-center">
-          <div>
+      <main className="min-h-screen overflow-x-hidden bg-[var(--color-bg)] px-4 py-10 sm:px-6 sm:py-12">
+        <div className="mx-auto flex min-h-[70vh] w-full max-w-[calc(100vw-2rem)] items-center justify-center text-center sm:max-w-md">
+          <div className="min-w-0">
             <div className="mx-auto mb-4 grid h-12 w-12 place-items-center rounded-full bg-[var(--color-gold)]/10 text-[var(--color-gold)]">
               <ScrollText className="h-5 w-5" />
             </div>
 
-            <h1 className="text-2xl font-normal tracking-[-0.03em]">Notaría no encontrada</h1>
+            <h1 className="break-words text-2xl font-normal">Notaría no encontrada</h1>
 
-            <p className="mt-2 text-sm text-[var(--color-muted)]">
+            <p className="mt-2 break-words text-sm text-[var(--color-muted)]">
               El enlace puede haber cambiado o la notaría ya no está disponible.
             </p>
           </div>
@@ -49,9 +49,9 @@ export default async function ClientListPage({ params }: { params: Promise<{ slu
     .order("created_at");
 
   return (
-    <main className="min-h-screen bg-[var(--color-bg)]">
-      <section className="mx-auto max-w-md px-5 py-8">
-        <div className="flex items-center gap-2">
+    <main className="min-h-screen overflow-x-hidden bg-[var(--color-bg)]">
+      <section className="mx-auto min-w-0 max-w-md px-4 py-8 sm:px-5">
+        <div className="flex min-w-0 items-center gap-2">
           <div className="grid h-9 w-9 place-items-center rounded-xl bg-[var(--color-gold)]/10 text-[var(--color-gold)]">
             <ScrollText className="h-5 w-5" />
           </div>
@@ -59,16 +59,16 @@ export default async function ClientListPage({ params }: { params: Promise<{ slu
           <p className="min-w-0 truncate text-sm font-medium text-[var(--color-navy)]">{tenant.name}</p>
         </div>
 
-        <div className="mt-10">
+        <div className="mt-10 min-w-0">
           <p className="text-xs font-medium uppercase tracking-[0.35em] text-[var(--color-muted)]">
             Seleccione su trámite
           </p>
 
-          <h1 className="mt-4 text-4xl font-normal leading-tight tracking-[-0.05em]">
+          <h1 className="mt-4 break-words text-3xl font-normal leading-tight sm:text-4xl">
             ¿Qué documento <span className="italic text-[var(--color-gold)]">necesita?</span>
           </h1>
 
-          <p className="mt-4 text-sm leading-6 text-[var(--color-muted)]">
+          <p className="mt-4 break-words text-sm leading-6 text-[var(--color-muted)]">
             Elija un documento, complete sus datos y revise el estado de su solicitud desde esta misma pantalla.
           </p>
         </div>
@@ -77,7 +77,7 @@ export default async function ClientListPage({ params }: { params: Promise<{ slu
           <ClientRequestsList tenantId={tenant.id} />
         </div>
 
-        <div className="mt-8 space-y-4">
+        <div className="mt-8 min-w-0 space-y-4">
           {(docs ?? []).length === 0 ? (
             <div className="rounded-2xl border border-[var(--color-border)] bg-white/80 p-6 text-center shadow-sm">
               <p className="text-sm text-[var(--color-muted)]">No hay documentos disponibles por el momento.</p>
@@ -87,7 +87,7 @@ export default async function ClientListPage({ params }: { params: Promise<{ slu
               <Link
                 key={doc.id}
                 href={`/c/${slug}/${doc.id}`}
-                className="group flex items-center gap-4 rounded-3xl border border-[var(--color-border)] bg-white/85 p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+                className="group flex min-w-0 items-start gap-3 rounded-3xl border border-[var(--color-border)] bg-white/85 p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md sm:items-center sm:gap-4 sm:p-5"
               >
                 <div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-slate-100 text-[var(--color-navy)]">
                   <FileText className="h-5 w-5" />

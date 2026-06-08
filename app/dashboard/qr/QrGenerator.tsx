@@ -107,20 +107,20 @@ export default function QrGenerator({ tenant }: { tenant: TenantRow }) {
   };
 
   return (
-    <div className="mt-6 space-y-4">
+    <div className="mt-6 min-w-0 space-y-4">
       <Card className="print:border-none print:shadow-none">
-        <div className="mx-auto max-w-xl text-center">
-          <p className="text-xs font-medium uppercase tracking-[0.35em] text-[var(--color-muted)]">{tenant.name}</p>
+        <div className="mx-auto min-w-0 max-w-xl text-center">
+          <p className="break-words text-xs font-medium uppercase tracking-[0.35em] text-[var(--color-muted)]">{tenant.name}</p>
 
-          <h2 className="mt-4 text-3xl font-normal tracking-[-0.03em]">Solicite su documento</h2>
+          <h2 className="mt-4 break-words text-2xl font-normal sm:text-3xl">Solicite su documento</h2>
 
           <p className="mt-2 text-sm text-[var(--color-muted)]">Escanee con la cámara de su teléfono</p>
 
-          <div className="mx-auto mt-8 flex w-fit rounded-2xl border border-[var(--color-border)] bg-white p-4 shadow-sm">
+          <div className="mx-auto mt-8 flex w-full max-w-[18rem] rounded-2xl border border-[var(--color-border)] bg-white p-3 shadow-sm sm:w-fit sm:max-w-none sm:p-4">
             {qr ? (
-              <img src={qr} alt={`Código QR de ${tenant.name}`} className="h-72 w-72" />
+              <img src={qr} alt={`Código QR de ${tenant.name}`} className="aspect-square h-auto w-full sm:h-72 sm:w-72" />
             ) : (
-              <div className="grid h-72 w-72 place-items-center text-sm text-[var(--color-muted)]">Generando QR...</div>
+              <div className="grid aspect-square w-full place-items-center text-sm text-[var(--color-muted)] sm:h-72 sm:w-72">Generando QR...</div>
             )}
           </div>
 
@@ -128,13 +128,13 @@ export default function QrGenerator({ tenant }: { tenant: TenantRow }) {
         </div>
       </Card>
 
-      <div className="flex flex-wrap gap-2 print:hidden">
-        <Button type="button" variant="secondary" onClick={copyLink}>
+      <div className="flex flex-col gap-2 print:hidden sm:flex-row sm:flex-wrap">
+        <Button type="button" variant="secondary" onClick={copyLink} className="w-full sm:w-auto">
           <Copy className="h-4 w-4" />
           {copied ? "Link copiado" : "Copiar link"}
         </Button>
 
-        <Button type="button" variant="secondary" onClick={downloadPdf} disabled={!qr}>
+        <Button type="button" variant="secondary" onClick={downloadPdf} disabled={!qr} className="w-full sm:w-auto">
           <FileDown className="h-4 w-4" />
           Descargar PDF
         </Button>

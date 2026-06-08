@@ -50,25 +50,25 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="min-h-screen px-6 py-12">
-      <div className="mx-auto flex min-h-[calc(100vh-6rem)] w-full max-w-md flex-col items-center justify-center">
+    <main className="min-h-screen overflow-x-hidden px-4 py-10 sm:px-6 sm:py-12">
+      <div className="mx-auto flex min-h-[calc(100vh-6rem)] w-full max-w-[calc(100vw-2rem)] flex-col items-center justify-center sm:max-w-md">
         <form
           onSubmit={submit}
-          className="w-full rounded-2xl border border-[var(--color-border)] bg-white/80 p-8 shadow-[0_22px_60px_rgba(7,27,58,0.10)]"
+          className="w-full max-w-[calc(100vw-2rem)] rounded-2xl border border-[var(--color-border)] bg-white/80 p-4 shadow-[0_22px_60px_rgba(7,27,58,0.10)] sm:max-w-md sm:p-8"
         >
           <div className="text-center">
             <div className="mx-auto mb-4 grid h-11 w-11 place-items-center rounded-full border border-[var(--color-gold)]/30 bg-[var(--color-gold)]/10 text-[var(--color-gold)]">
               <ScrollText className="h-5 w-5" />
             </div>
 
-            <h1 className="text-[2rem] font-normal tracking-[-0.03em]">Acceso notario</h1>
+            <h1 className="break-words text-3xl font-normal">Acceso notario</h1>
 
-            <p className="mt-2 text-sm text-[var(--color-muted)]">Panel de administración</p>
+            <p className="mt-2 break-words text-sm text-[var(--color-muted)]">Panel de administración</p>
           </div>
 
           <div className="mt-8 space-y-5">
             <div>
-              <label className="mb-2 block text-sm font-medium">Correo electrónico</label>
+              <label className="mb-2 block break-words text-sm font-medium">Correo electrónico</label>
 
               <input
                 type="email"
@@ -80,9 +80,9 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <label className="mb-2 block text-sm font-medium">Contraseña</label>
+              <label className="mb-2 block break-words text-sm font-medium">Contraseña</label>
 
-              <div className="relative">
+              <div className="relative min-w-0">
                 <input
                   type={showPassword ? "text" : "password"}
                   required
@@ -113,7 +113,7 @@ export default function LoginPage() {
           <button
             type="button"
             onClick={resetPassword}
-            className="mt-6 w-full text-center text-sm text-[var(--color-muted)] underline-offset-4 transition hover:text-[var(--color-navy)] hover:underline"
+            className="mt-6 w-full text-center text-sm break-words text-[var(--color-muted)] underline-offset-4 transition hover:text-[var(--color-navy)] hover:underline"
           >
             ¿Olvidaste tu contraseña?
           </button>

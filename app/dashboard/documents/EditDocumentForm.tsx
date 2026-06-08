@@ -64,7 +64,7 @@ export default function EditDocumentForm({
   }
 
   return (
-    <div className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-cream-input)] p-4">
+    <div className="min-w-0 w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-cream-input)] p-3 sm:p-4">
       <div className="space-y-3">
         <Input
           value={title}
@@ -82,13 +82,13 @@ export default function EditDocumentForm({
           className="w-full rounded-lg border border-[#DCD5C7] bg-white px-3 py-2 text-sm outline-none transition focus:border-[var(--color-navy)] focus:ring-4 focus:ring-[var(--color-navy)]/10"
         />
 
-        <div className="flex flex-wrap gap-2">
-          <Button type="button" onClick={save} disabled={saving}>
+        <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+          <Button type="button" onClick={save} disabled={saving} className="w-full sm:w-auto">
             <Check className="h-4 w-4" />
             {saving ? "Guardando..." : "Guardar cambios"}
           </Button>
 
-          <Button type="button" variant="secondary" onClick={cancelEdit} disabled={saving}>
+          <Button type="button" variant="secondary" onClick={cancelEdit} disabled={saving} className="w-full sm:w-auto">
             <X className="h-4 w-4" />
             Cancelar
           </Button>

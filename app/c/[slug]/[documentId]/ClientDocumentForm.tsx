@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Button, Card } from "@/components/ui";
 import { saveClientRequest } from "@/lib/client-requests-storage";
 import { supabase } from "@/lib/supabase";
@@ -93,7 +93,7 @@ export default function ClientDocumentForm({ doc, fields, slug }: { doc: Doc; fi
   const [trackingToken, setTrackingToken] = useState<string | null>(null);
   const [status, setStatus] = useState("pending");
 
-  const refreshCurrentRequest = async () => {
+  const refreshCurrentRequest = useCallback(async () => {
     if (!requestId || !trackingToken) return;
 
     const { data, error } = await supabase.rpc("get_client_document_requests", {
@@ -111,7 +111,7 @@ export default function ClientDocumentForm({ doc, fields, slug }: { doc: Doc; fi
     if (!current) return;
 
     setStatus(current.status ?? "pending");
-  };
+  }, [requestId, trackingToken]);
 
   useEffect(() => {
     if (!requestId || !trackingToken) return;
@@ -123,7 +123,7 @@ export default function ClientDocumentForm({ doc, fields, slug }: { doc: Doc; fi
     return () => {
       window.clearInterval(intervalId);
     };
-  }, [requestId, trackingToken]);
+  }, [requestId, trackingToken, refreshCurrentRequest]);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -188,16 +188,16 @@ export default function ClientDocumentForm({ doc, fields, slug }: { doc: Doc; fi
 
         <p className="mt-6 text-xs font-medium uppercase tracking-[0.25em] text-[var(--color-muted)]">Estado actual</p>
 
-        <h2 className="mt-2 text-3xl font-normal tracking-[-0.03em]">{STATUS_LABEL[status] ?? status}</h2>
+        <h2 className="mt-2 break-words text-2xl font-normal sm:text-3xl">{STATUS_LABEL[status] ?? status}</h2>
 
         <p className="mx-auto mt-3 max-w-sm text-sm leading-6 text-[var(--color-muted)]">
           {STATUS_MESSAGE[status] ?? "Su solicitud fue enviada correctamente."}
         </p>
 
-        <p className="mt-5 text-sm font-medium">{doc.title}</p>
+        <p className="mt-5 break-words text-sm font-medium">{doc.title}</p>
 
         {status !== "cancelled" && (
-          <div className="mx-auto mt-8 max-w-xs text-left">
+          <div className="mx-auto mt-8 min-w-0 max-w-xs text-left">
             {STEPS.map((step, index) => {
               const completed = index < currentStep;
               const current = index === currentStep;
@@ -233,7 +233,7 @@ export default function ClientDocumentForm({ doc, fields, slug }: { doc: Doc; fi
                     </div>
                   </div>
 
-                  <div className="pt-0.5">
+                  <div className="min-w-0 pt-0.5">
                     <p
                       className={`text-sm ${
                         active ? "font-medium text-[var(--color-navy)]" : "text-[var(--color-muted)]"
@@ -256,7 +256,7 @@ export default function ClientDocumentForm({ doc, fields, slug }: { doc: Doc; fi
           <div className="flex gap-2">
             <Info className="mt-0.5 h-4 w-4 shrink-0" />
 
-            <div>
+            <div className="min-w-0">
               <p className="font-medium">Seguimiento guardado</p>
               <p className="mt-1 leading-6">
                 Puede solicitar otro documento y volver al listado sin perder este seguimiento. Si mantiene esta
@@ -266,9 +266,9 @@ export default function ClientDocumentForm({ doc, fields, slug }: { doc: Doc; fi
           </div>
         </div>
 
-        <div className="mt-8 flex items-center justify-center gap-2 text-xs text-[var(--color-muted)]">
+        <div className="mt-8 flex min-w-0 items-center justify-center gap-2 text-xs text-[var(--color-muted)]">
           <span className="h-2 w-2 rounded-full bg-[var(--color-navy)]" />
-          Actualizando estado automáticamente
+          <span className="min-w-0 break-words">Actualizando estado automáticamente</span>
         </div>
 
         <a
@@ -288,8 +288,8 @@ export default function ClientDocumentForm({ doc, fields, slug }: { doc: Doc; fi
           <p className="text-sm text-[var(--color-muted)]">Este documento no requiere información adicional.</p>
         ) : (
           fields.map((field) => (
-            <div key={field.id}>
-              <label className="mb-2 block text-sm font-medium">
+            <div key={field.id} className="min-w-0">
+              <label className="mb-2 block break-words text-sm font-medium">
                 {field.label}
                 {field.required && <span className="ml-1 text-[var(--color-gold)]">*</span>}
               </label>
@@ -334,7 +334,7 @@ export default function ClientDocumentForm({ doc, fields, slug }: { doc: Doc; fi
         <div className="rounded-xl border border-[#EAC77E] bg-[#FFF8E8] px-4 py-3 text-sm text-[#7A4A00]">
           <div className="flex gap-2">
             <Info className="mt-0.5 h-4 w-4 shrink-0" />
-            <p>Después de enviar verá una pantalla de seguimiento con el estado actualizado automáticamente.</p>
+            <p className="min-w-0 break-words">Después de enviar verá una pantalla de seguimiento con el estado actualizado automáticamente.</p>
           </div>
         </div>
 

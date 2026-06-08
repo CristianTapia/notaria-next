@@ -78,7 +78,7 @@ export default async function DashboardDocumentsPage() {
   const activeCount = typedDocuments.filter((doc) => doc.active).length;
 
   return (
-    <div>
+    <div className="min-w-0">
       <PageHeader
         eyebrow="Configuración"
         title="Documentos"
@@ -92,15 +92,15 @@ export default async function DashboardDocumentsPage() {
 
       <CreateDocumentForm tenantId={tenantRole.tenant_id} />
 
-      <div className="mt-6 space-y-4">
+      <div className="mt-6 min-w-0 space-y-4">
         {typedDocuments.length === 0 ? (
           <Card className="flex min-h-48 flex-col items-center justify-center text-center">
             <div className="grid h-11 w-11 place-items-center rounded-full bg-[var(--color-gold)]/10 text-[var(--color-gold)]">
               <Inbox className="h-5 w-5" />
             </div>
 
-            <p className="mt-4 font-medium">No hay documentos todavía</p>
-            <p className="mt-1 text-sm text-[var(--color-muted)]">
+            <p className="mt-4 break-words font-medium">No hay documentos todavía</p>
+            <p className="mt-1 break-words text-sm text-[var(--color-muted)]">
               Crea el primer documento para comenzar a recibir solicitudes.
             </p>
           </Card>

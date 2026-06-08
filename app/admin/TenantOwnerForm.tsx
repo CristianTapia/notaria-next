@@ -14,16 +14,16 @@ export default function TenantOwnerForm({ tenantId }: { tenantId: string }) {
         Invitar dueño de notaría
       </p>
 
-      <div className="flex gap-2">
-        <Input name="email" type="email" required placeholder="correo@ejemplo.com" className="flex-1" />
+      <div className="flex min-w-0 flex-col gap-2 sm:flex-row">
+        <Input name="email" type="email" required placeholder="correo@ejemplo.com" className="min-w-0 flex-1" />
 
-        <Button type="submit">
+        <Button type="submit" className="w-full sm:w-auto">
           <UserPlus className="h-4 w-4" />
           Invitar
         </Button>
       </div>
 
-      <p className="mt-2 text-xs text-[var(--color-muted)]">
+      <p className="mt-2 break-words text-xs text-[var(--color-muted)]">
         Si el correo no existe, se enviará una invitación para crear su contraseña.
       </p>
     </form>

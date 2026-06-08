@@ -48,17 +48,17 @@ function formatRequestDate(date: string) {
 export default function RequestCard({ request }: { request: RequestRow }) {
   return (
     <Card>
-      <div className="flex items-start justify-between gap-4">
+      <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
         <div className="min-w-0">
           <h2 className="break-words text-base font-medium">{request.documents?.title ?? "Documento"}</h2>
 
-          <div className="mt-2 flex items-center gap-2 text-xs text-[var(--color-muted)]">
+          <div className="mt-2 flex min-w-0 items-center gap-2 text-xs text-[var(--color-muted)]">
             <Clock className="h-3.5 w-3.5" />
-            <span>{formatRequestDate(request.created_at)}</span>
+            <span className="min-w-0 break-words">{formatRequestDate(request.created_at)}</span>
           </div>
         </div>
 
-        <Badge variant={STATUS_BADGE_VARIANT[request.status] ?? "neutral"}>
+        <Badge variant={STATUS_BADGE_VARIANT[request.status] ?? "neutral"} className="w-fit">
           {STATUS_LABEL[request.status] ?? request.status}
         </Badge>
       </div>
@@ -72,10 +72,10 @@ export default function RequestCard({ request }: { request: RequestRow }) {
       </div>
 
       {request.data && (
-        <div className="mt-4 grid gap-4 sm:grid-cols-2">
+        <div className="mt-4 grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2">
           {Object.entries(request.data).map(([key, value]) => (
             <div key={key} className="min-w-0">
-              <p className="text-xs uppercase tracking-wide text-[var(--color-muted)]">{key}</p>
+              <p className="break-words text-xs uppercase tracking-wide text-[var(--color-muted)]">{key}</p>
               <p className="mt-1 break-words text-sm">{String(value || "—")}</p>
             </div>
           ))}

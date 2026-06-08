@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
+import { Card, PageHeader } from "@/components/ui";
 import CreateTenantForm from "./CreateTenantForm";
 import TenantAdminCard from "./TenantAdminCard";
 
@@ -41,33 +42,28 @@ export default async function AdminPage() {
   const activeCount = typedTenants.filter((tenant) => tenant.active).length;
 
   return (
-    <div>
-      <header className="mb-8">
-        <p className="text-sm font-medium text-[var(--color-gold)]">Administración global</p>
+    <div className="min-w-0">
+      <PageHeader
+        eyebrow="Administración global"
+        title="Notarías"
+        description="Crea, administra y asigna dueños a cada notaría."
+      >
+        <Card className="hidden px-5 py-3 text-right md:block">
+          <p className="text-2xl font-medium">{typedTenants.length}</p>
+          <p className="text-xs text-[var(--color-muted)]">{activeCount} activas</p>
+        </Card>
+      </PageHeader>
 
-        <div className="mt-2 flex items-end justify-between gap-6">
-          <div>
-            <h1 className="text-3xl font-normal tracking-[-0.03em]">Notarías</h1>
-            <p className="mt-2 text-sm text-[var(--color-muted)]">Crea, administra y asigna dueños a cada notaría.</p>
-          </div>
-
-          <div className="hidden rounded-2xl border border-[var(--color-border)] bg-white/80 px-5 py-3 text-right shadow-sm md:block">
-            <p className="text-2xl font-medium">{typedTenants.length}</p>
-            <p className="text-xs text-[var(--color-muted)]">{activeCount} activas</p>
-          </div>
-        </div>
-      </header>
-
-      <div className="grid gap-6 xl:grid-cols-[420px_1fr]">
-        <div>
+      <div className="grid min-w-0 grid-cols-1 gap-6 xl:grid-cols-[minmax(0,420px)_minmax(0,1fr)]">
+        <div className="min-w-0">
           <CreateTenantForm />
         </div>
 
-        <section className="space-y-3">
+        <section className="min-w-0 space-y-3">
           {typedTenants.length === 0 ? (
-            <div className="rounded-2xl border border-[var(--color-border)] bg-white/80 p-8 text-center">
+            <Card className="p-6 text-center sm:p-8">
               <p className="text-sm text-[var(--color-muted)]">Aún no hay notarías creadas.</p>
-            </div>
+            </Card>
           ) : (
             typedTenants.map((tenant) => <TenantAdminCard key={tenant.id} tenant={tenant} />)
           )}

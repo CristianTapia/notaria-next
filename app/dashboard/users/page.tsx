@@ -65,7 +65,7 @@ export default async function UsersPage() {
   const memberCount = typedRoles.filter((role) => role.role === "tenant_member").length;
 
   return (
-    <div>
+    <div className="min-w-0">
       <PageHeader
         eyebrow="Equipo"
         title="Usuarios"
@@ -83,10 +83,10 @@ export default async function UsersPage() {
             Invitar funcionario
           </p>
 
-          <div className="flex gap-2">
-            <Input name="email" type="email" required placeholder="correo@ejemplo.com" className="flex-1" />
+          <div className="flex min-w-0 flex-col gap-2 sm:flex-row">
+            <Input name="email" type="email" required placeholder="correo@ejemplo.com" className="min-w-0 flex-1" />
 
-            <Button>
+            <Button className="w-full sm:w-auto">
               <Mail className="h-4 w-4" />
               Invitar
             </Button>
@@ -94,7 +94,7 @@ export default async function UsersPage() {
         </form>
       </Card>
 
-      <div className="mt-6 space-y-3">
+      <div className="mt-6 min-w-0 space-y-3">
         {typedRoles.map((role) => {
           const roleUser = users.find((u) => u.id === role.user_id);
           const email = roleUser?.email ?? role.user_id;
@@ -102,19 +102,19 @@ export default async function UsersPage() {
 
           return (
             <Card key={role.id}>
-              <div className="flex items-center justify-between gap-4">
+              <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
                 <div className="flex min-w-0 items-center gap-3">
                   <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-[var(--color-gold)]/10 text-[var(--color-gold)]">
                     <UserRound className="h-5 w-5" />
                   </div>
 
                   <div className="min-w-0">
-                    <p className="truncate text-sm font-medium">{email}</p>
+                    <p className="break-all text-sm font-medium">{email}</p>
                     <p className="mt-1 text-xs text-[var(--color-muted)]">{ROLE_LABEL[role.role] ?? role.role}</p>
                   </div>
                 </div>
 
-                <div className="flex shrink-0 items-center gap-2">
+                <div className="flex shrink-0 flex-wrap items-center gap-2 sm:justify-end">
                   <Badge variant={isOwner ? "gold" : "neutral"}>{ROLE_LABEL[role.role] ?? role.role}</Badge>
 
                   {role.role === "tenant_member" && (
@@ -138,8 +138,8 @@ export default async function UsersPage() {
               <Users className="h-5 w-5" />
             </div>
 
-            <p className="mt-4 font-medium">No hay usuarios asignados</p>
-            <p className="mt-1 text-sm text-[var(--color-muted)]">Invita al primer funcionario para comenzar.</p>
+            <p className="mt-4 break-words font-medium">No hay usuarios asignados</p>
+            <p className="mt-1 break-words text-sm text-[var(--color-muted)]">Invita al primer funcionario para comenzar.</p>
           </Card>
         )}
       </div>

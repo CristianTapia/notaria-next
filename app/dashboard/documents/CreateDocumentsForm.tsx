@@ -44,17 +44,17 @@ export default function CreateDocumentForm({ tenantId }: { tenantId: string }) {
       <form onSubmit={submit}>
         <p className="mb-3 text-xs font-medium uppercase tracking-wide text-[var(--color-muted)]">Crear documento</p>
 
-        <div className="flex gap-2">
+        <div className="flex min-w-0 flex-col gap-2 sm:flex-row">
           <Input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
             disabled={saving}
             placeholder="Nombre del documento"
-            className="flex-1"
+            className="min-w-0 flex-1"
           />
 
-          <Button type="submit" disabled={saving}>
+          <Button type="submit" disabled={saving} className="w-full sm:w-auto">
             <Plus className="h-4 w-4" />
             {saving ? "Creando..." : "Crear"}
           </Button>

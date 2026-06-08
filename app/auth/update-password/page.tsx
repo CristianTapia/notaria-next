@@ -61,13 +61,13 @@ export default function UpdatePasswordPage() {
   };
 
   if (!ready) {
-    return <main className="min-h-screen flex items-center justify-center">Preparando sesión...</main>;
+    return <main className="flex min-h-screen items-center justify-center px-4 text-center">Preparando sesión...</main>;
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center p-6">
-      <form onSubmit={submit} className="w-full max-w-sm space-y-4 rounded-xl border p-6">
-        <h1 className="text-2xl font-bold">Crear contraseña</h1>
+    <main className="flex min-h-screen items-center justify-center p-4 sm:p-6">
+      <form onSubmit={submit} className="w-full max-w-sm space-y-4 rounded-xl border p-4 sm:p-6">
+        <h1 className="break-words text-2xl font-bold">Crear contraseña</h1>
 
         <input
           type="password"

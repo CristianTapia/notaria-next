@@ -1,7 +1,7 @@
 "use client";
 
 import { Bell } from "lucide-react";
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 
 import { Button, PageHeader } from "@/components/ui";
 import RequestCard from "./RequestCard";
@@ -29,23 +29,52 @@ const FILTERS = [
   { value: "archived", label: "Archivadas" },
 ] as const;
 
+const REQUESTS_SOUND_EVENT = "requests-sound-change";
+let soundPreferenceHydrated = false;
+
+function subscribeToSoundPreference(onStoreChange: () => void) {
+  window.addEventListener(REQUESTS_SOUND_EVENT, onStoreChange);
+  window.addEventListener("storage", onStoreChange);
+
+  const timeoutId = window.setTimeout(() => {
+    soundPreferenceHydrated = true;
+    onStoreChange();
+  }, 0);
+
+  return () => {
+    window.clearTimeout(timeoutId);
+    window.removeEventListener(REQUESTS_SOUND_EVENT, onStoreChange);
+    window.removeEventListener("storage", onStoreChange);
+  };
+}
+
+function getSoundPreferenceSnapshot() {
+  if (!soundPreferenceHydrated) return false;
+
+  return localStorage.getItem("requests-sound") === "on";
+}
+
+function getServerSoundPreferenceSnapshot() {
+  return false;
+}
+
 export default function RequestsClient({ tenantId, requests }: { tenantId: string; requests: RequestRow[] }) {
   const [filter, setFilter] = useState("active");
-  const [soundEnabled, setSoundEnabled] = useState(() => {
-    if (typeof window === "undefined") return false;
-
-    return window.localStorage.getItem("requests-sound") === "on";
-  });
+  const soundEnabled = useSyncExternalStore(
+    subscribeToSoundPreference,
+    getSoundPreferenceSnapshot,
+    getServerSoundPreferenceSnapshot,
+  );
 
   const toggleSound = async () => {
     if (soundEnabled) {
       localStorage.removeItem("requests-sound");
-      setSoundEnabled(false);
+      window.dispatchEvent(new Event(REQUESTS_SOUND_EVENT));
       return;
     }
 
     localStorage.setItem("requests-sound", "on");
-    setSoundEnabled(true);
+    window.dispatchEvent(new Event(REQUESTS_SOUND_EVENT));
 
     playNotificationSound();
 
@@ -75,7 +104,7 @@ export default function RequestsClient({ tenantId, requests }: { tenantId: strin
   };
 
   return (
-    <div>
+    <div className="min-w-0">
       <RequestsRealtime tenantId={tenantId} soundEnabled={soundEnabled} />
 
       <PageHeader
@@ -83,19 +112,24 @@ export default function RequestsClient({ tenantId, requests }: { tenantId: strin
         title="Solicitudes"
         description="Solicitudes de clientes recibidas en tiempo real."
       >
-        <Button type="button" variant={soundEnabled ? "secondary" : "primary"} onClick={toggleSound}>
+        <Button
+          type="button"
+          variant={soundEnabled ? "secondary" : "primary"}
+          onClick={toggleSound}
+          className="w-full sm:w-auto"
+        >
           <Bell className="h-4 w-4" />
           {soundEnabled ? "Avisos activados" : "Activar avisos"}
         </Button>
       </PageHeader>
 
-      <div className="mb-6 flex flex-wrap gap-2">
+      <div className="mb-6 flex min-w-0 flex-wrap gap-2">
         {FILTERS.map((item) => (
           <button
             key={item.value}
             type="button"
             onClick={() => setFilter(item.value)}
-            className={`rounded-full px-4 py-2 text-xs font-medium transition ${
+            className={`min-w-0 rounded-full px-4 py-2 text-xs font-medium break-words transition ${
               filter === item.value
                 ? "bg-[var(--color-navy)] text-white"
                 : "bg-white/80 text-[var(--color-muted)] hover:bg-[var(--color-cream-input)]"
@@ -109,7 +143,7 @@ export default function RequestsClient({ tenantId, requests }: { tenantId: strin
         ))}
       </div>
 
-      <div className="space-y-3">
+      <div className="min-w-0 space-y-3">
         {filteredRequests.length === 0 ? (
           <p className="text-sm text-[var(--color-muted)]">No hay solicitudes para este filtro.</p>
         ) : (
