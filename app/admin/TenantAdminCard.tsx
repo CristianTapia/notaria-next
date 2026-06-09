@@ -2,11 +2,9 @@
 
 import { Check, Pencil, Trash2, X } from "lucide-react";
 import { useMemo, useState } from "react";
-
-import { Button, Card, Input } from "@/components/ui";
-
 import { deleteTenant, updateTenant } from "./actions";
-import TenantOwnerForm from "./TenantOwnerForm";
+import { Badge, Button, Card, CollapsibleCard, Input } from "@/components/ui";
+import { UserRound } from "lucide-react";
 
 type TenantRow = {
   id: string;
@@ -14,6 +12,13 @@ type TenantRow = {
   slug: string;
   active: boolean;
   created_at: string;
+};
+
+type TenantTeamMember = {
+  id: string;
+  userId: string;
+  email: string;
+  role: string;
 };
 
 function createSlugPreview(name: string) {
@@ -27,7 +32,7 @@ function createSlugPreview(name: string) {
     .replace(/-+/g, "-");
 }
 
-export default function TenantAdminCard({ tenant }: { tenant: TenantRow }) {
+export default function TenantAdminCard({ tenant, team }: { tenant: TenantRow; team: TenantTeamMember[] }) {
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(tenant.name);
   const [active, setActive] = useState(tenant.active);
@@ -40,6 +45,9 @@ export default function TenantAdminCard({ tenant }: { tenant: TenantRow }) {
     setActive(tenant.active);
     setEditing(false);
   };
+
+  const owners = team.filter((member) => member.role === "tenant_owner");
+  const members = team.filter((member) => member.role === "tenant_member");
 
   return (
     <Card>
@@ -97,7 +105,9 @@ export default function TenantAdminCard({ tenant }: { tenant: TenantRow }) {
         {slugWillChange && (
           <div className="rounded-xl border border-[#EAC77E] bg-[#FFF8E8] p-3 text-sm text-[#7A4A00]">
             <p className="font-medium">Advertencia</p>
-            <p className="mt-1 break-words">Cambiar el nombre modificará el link público. El QR anterior dejará de funcionar.</p>
+            <p className="mt-1 break-words">
+              Cambiar el nombre modificará el link público. El QR anterior dejará de funcionar.
+            </p>
 
             <label className="mt-3 flex items-start gap-2">
               <input type="checkbox" name="confirmSlugChange" className="mt-1" required />
@@ -125,8 +135,58 @@ export default function TenantAdminCard({ tenant }: { tenant: TenantRow }) {
         <input type="hidden" name="id" value={tenant.id} />
       </form>
 
-      <div className="mt-4 border-t border-[var(--color-border)] pt-4">
-        <TenantOwnerForm tenantId={tenant.id} />
+      <div className="mt-4">
+        <CollapsibleCard variant="inline" title="Equipo" subtitle={`${team.length} usuarios asociados`}>
+          <div className="space-y-4">
+            <div>
+              <p className="text-xs font-medium uppercase tracking-wide text-[var(--color-muted)]">Dueños</p>
+
+              <div className="mt-2 space-y-2">
+                {owners.length === 0 ? (
+                  <p className="text-sm text-[var(--color-muted)]">No hay dueño asignado.</p>
+                ) : (
+                  owners.map((owner) => (
+                    <div
+                      key={owner.id}
+                      className="flex min-w-0 items-center justify-between gap-3 rounded-xl bg-[var(--color-cream-input)] p-3"
+                    >
+                      <div className="flex min-w-0 items-center gap-3">
+                        <UserRound className="h-4 w-4 shrink-0 text-[var(--color-gold)]" />
+                        <p className="min-w-0 break-all text-sm">{owner.email}</p>
+                      </div>
+
+                      <Badge variant="gold">Owner</Badge>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+
+            <div>
+              <p className="text-xs font-medium uppercase tracking-wide text-[var(--color-muted)]">Funcionarios</p>
+
+              <div className="mt-2 space-y-2">
+                {members.length === 0 ? (
+                  <p className="text-sm text-[var(--color-muted)]">No hay funcionarios asignados.</p>
+                ) : (
+                  members.map((member) => (
+                    <div
+                      key={member.id}
+                      className="flex min-w-0 items-center justify-between gap-3 rounded-xl bg-[var(--color-cream-input)] p-3"
+                    >
+                      <div className="flex min-w-0 items-center gap-3">
+                        <UserRound className="h-4 w-4 shrink-0 text-[var(--color-muted)]" />
+                        <p className="min-w-0 break-all text-sm">{member.email}</p>
+                      </div>
+
+                      <Badge variant="neutral">Funcionario</Badge>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          </div>
+        </CollapsibleCard>
       </div>
     </Card>
   );
