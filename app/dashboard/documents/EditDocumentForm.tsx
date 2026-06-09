@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Button, Input, Modal, Textarea } from "@/components/ui";
 import { supabase } from "@/lib/supabase";
 import { documentSchema } from "@/schemas/document";
+import { toast } from "sonner";
 
 export default function EditDocumentForm({
   documentId,
@@ -32,7 +33,7 @@ export default function EditDocumentForm({
     });
 
     if (!parsed.success) {
-      alert(parsed.error.issues[0]?.message ?? "Datos inválidos");
+      toast.error(parsed.error.issues[0]?.message ?? "Datos inválidos");
       return;
     }
 
@@ -51,10 +52,11 @@ export default function EditDocumentForm({
     setSaving(false);
 
     if (error) {
-      alert(error.message);
+      toast.error(error.message);
       return;
     }
 
+    toast.success("Documento actualizado");
     setOpen(false);
   };
 

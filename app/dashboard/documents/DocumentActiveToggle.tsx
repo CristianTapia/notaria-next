@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-
 import { Switch } from "@/components/ui";
 import { supabase } from "@/lib/supabase";
+import { toast } from "sonner";
 
 export default function DocumentActiveToggle({
   documentId,
@@ -27,9 +27,12 @@ export default function DocumentActiveToggle({
     setSaving(false);
 
     if (error) {
-      alert(error.message);
+      toast.error(error.message);
       setActive(previousActive);
+      return;
     }
+
+    toast.success(nextActive ? "Documento visible" : "Documento oculto");
   };
 
   return (

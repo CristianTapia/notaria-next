@@ -5,6 +5,7 @@ import { Button, Card } from "@/components/ui";
 import { saveClientRequest } from "@/lib/client-requests-storage";
 import { supabase } from "@/lib/supabase";
 import { BadgeCheck, CheckCircle2, CircleX, Clock, Info, LoaderCircle } from "lucide-react";
+import { toast } from "sonner";
 
 const STATUS_STEP: Record<string, number> = {
   pending: 0,
@@ -157,14 +158,14 @@ export default function ClientDocumentForm({ doc, fields, slug }: { doc: Doc; fi
     setSubmitting(false);
 
     if (error) {
-      alert(error.message);
+      toast.error(error.message);
       return;
     }
 
     const request = inserted?.[0];
 
     if (!request) {
-      alert("No se pudo obtener la solicitud creada.");
+      toast.error("No se pudo obtener la solicitud creada.");
       return;
     }
 

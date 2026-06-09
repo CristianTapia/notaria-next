@@ -6,6 +6,7 @@ import { useState } from "react";
 import { Button, Card, Input } from "@/components/ui";
 import { supabase } from "@/lib/supabase";
 import { documentSchema } from "@/schemas/document";
+import { toast } from "sonner";
 
 export default function CreateDocumentForm({ tenantId }: { tenantId: string }) {
   const router = useRouter();
@@ -20,7 +21,7 @@ export default function CreateDocumentForm({ tenantId }: { tenantId: string }) {
     });
 
     if (!parsed.success) {
-      alert(parsed.error.issues[0]?.message ?? "Datos inválidos");
+      toast.error(parsed.error.issues[0]?.message ?? "Datos inválidos");
       return;
     }
 
@@ -38,12 +39,13 @@ export default function CreateDocumentForm({ tenantId }: { tenantId: string }) {
     setSaving(false);
 
     if (error) {
-      alert(error.message);
+      toast.error(error.message);
       return;
     }
 
     setTitle("");
     router.refresh();
+    toast.success("Documento creado");
   };
 
   return (

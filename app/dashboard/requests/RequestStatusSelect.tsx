@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { Select } from "@/components/ui";
+import { toast } from "sonner";
 
 const STATUS_OPTIONS = [
   { value: "pending", label: "Recibida" },
@@ -37,9 +38,12 @@ export default function RequestStatusSelect({
     setSaving(false);
 
     if (error) {
-      alert(error.message);
+      toast.error(error.message);
       setStatus(initialStatus);
+      return;
     }
+
+    toast.success("Estado actualizado");
   };
 
   return (

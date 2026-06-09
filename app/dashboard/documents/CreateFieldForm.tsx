@@ -3,7 +3,7 @@
 import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-
+import { toast } from "sonner";
 import { Button, Input, Modal, Select } from "@/components/ui";
 import { supabase } from "@/lib/supabase";
 import { fieldSchema } from "@/schemas/field";
@@ -43,7 +43,7 @@ export default function CreateFieldForm({ documentId, nextSortOrder }: { documen
     });
 
     if (!parsed.success) {
-      alert(parsed.error.issues[0]?.message ?? "Datos inválidos");
+      toast.error(parsed.error.issues[0]?.message ?? "Datos inválidos");
       return;
     }
 
@@ -64,13 +64,14 @@ export default function CreateFieldForm({ documentId, nextSortOrder }: { documen
     setSaving(false);
 
     if (error) {
-      alert(error.message);
+      toast.error(error.message);
       return;
     }
 
     reset();
     setOpen(false);
     router.refresh();
+    toast.success("Pregunta agregada");
   };
 
   return (

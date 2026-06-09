@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export default function UpdatePasswordPage() {
   const router = useRouter();
@@ -30,8 +31,10 @@ export default function UpdatePasswordPage() {
         });
 
         if (error) {
-          alert(error.message);
+          toast.error(error.message);
+          return;
         }
+        toast.success("Sesión iniciada");
 
         window.history.replaceState(null, "", window.location.pathname);
       }
@@ -53,10 +56,11 @@ export default function UpdatePasswordPage() {
     setBusy(false);
 
     if (error) {
-      alert(error.message);
+      toast.error(error.message);
       return;
     }
 
+    toast.success("Contraseña actualizada");
     router.push("/dashboard");
   };
 

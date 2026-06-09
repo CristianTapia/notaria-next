@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Eye, EyeOff, ScrollText } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { toast } from "sonner";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -24,16 +25,17 @@ export default function LoginPage() {
     setBusy(false);
 
     if (error) {
-      alert(error.message);
+      toast.error(error.message);
       return;
     }
 
+    toast.success("Sesión iniciada");
     router.push("/dashboard");
   };
 
   const resetPassword = async () => {
     if (!email) {
-      alert("Escribe tu correo primero");
+      toast.error("Escribe tu correo primero");
       return;
     }
 
@@ -42,11 +44,11 @@ export default function LoginPage() {
     });
 
     if (error) {
-      alert(error.message);
+      toast.error(error.message);
       return;
     }
 
-    alert("Te enviamos un correo para recuperar tu contraseña");
+    toast.success("Te enviamos un correo para recuperar tu contraseña");
   };
 
   return (

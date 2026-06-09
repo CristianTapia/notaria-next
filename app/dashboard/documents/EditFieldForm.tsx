@@ -6,6 +6,7 @@ import { useState } from "react";
 import { Badge, Button, Input, Modal, Select } from "@/components/ui";
 import { supabase } from "@/lib/supabase";
 import { fieldSchema } from "@/schemas/field";
+import { toast } from "sonner";
 
 const FIELD_TYPES = [
   { value: "text", label: "Texto corto" },
@@ -59,7 +60,7 @@ export default function EditFieldForm({ field }: { field: Field }) {
     });
 
     if (!parsed.success) {
-      alert(parsed.error.issues[0]?.message ?? "Datos inválidos");
+      toast.error(parsed.error.issues[0]?.message ?? "Datos inválidos");
       return;
     }
 
@@ -95,12 +96,13 @@ export default function EditFieldForm({ field }: { field: Field }) {
     setSaving(false);
 
     if (error) {
-      alert(error.message);
+      toast.error(error.message);
       return;
     }
 
     setOpen(false);
     router.refresh();
+    toast.success("Pregunta actualizada");
   };
 
   const remove = async () => {
@@ -114,11 +116,12 @@ export default function EditFieldForm({ field }: { field: Field }) {
     setSaving(false);
 
     if (error) {
-      alert(error.message);
+      toast.error(error.message);
       return;
     }
 
     router.refresh();
+    toast.success("Pregunta eliminada");
   };
 
   return (
