@@ -2,9 +2,9 @@
 
 import { Check, Pencil } from "lucide-react";
 import { useState } from "react";
-
 import { Button, Input, Modal, Textarea } from "@/components/ui";
 import { supabase } from "@/lib/supabase";
+import { documentSchema } from "@/schemas/document";
 
 export default function EditDocumentForm({
   documentId,
@@ -26,12 +26,17 @@ export default function EditDocumentForm({
   };
 
   const save = async () => {
-    const cleanTitle = title.trim();
+    const parsed = documentSchema.safeParse({
+      title,
+      description,
+    });
 
-    if (!cleanTitle) {
-      alert("El título es requerido");
+    if (!parsed.success) {
+      alert(parsed.error.issues[0]?.message ?? "Datos inválidos");
       return;
     }
+
+    const { title: cleanTitle, description: cleanDescription } = parsed.data;
 
     setSaving(true);
 
@@ -39,7 +44,7 @@ export default function EditDocumentForm({
       .from("documents")
       .update({
         title: cleanTitle,
-        description: description.trim() || null,
+        description: cleanDescription || null,
       })
       .eq("id", documentId);
 

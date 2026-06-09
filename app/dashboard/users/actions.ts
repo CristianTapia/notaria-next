@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
+import { inviteUserSchema } from "@/schemas/user";
 
 async function requireTenantOwner() {
   const supabase = await createSupabaseServerClient();
@@ -29,15 +30,30 @@ async function requireTenantOwner() {
   return role.tenant_id as string;
 }
 
-export async function inviteTenantMember(formData: FormData) {
-  const tenantId = await requireTenantOwner();
-  const email = String(formData.get("email") ?? "")
-    .trim()
-    .toLowerCase();
+export type InviteTenantMemberState = {
+  ok: boolean;
+  message: string;
+};
 
-  if (!email) {
-    throw new Error("Correo requerido");
+export async function inviteTenantMember(
+  _prevState: InviteTenantMemberState,
+  formData: FormData,
+): Promise<InviteTenantMemberState> {
+  const tenantId = await requireTenantOwner();
+
+  const parsed = inviteUserSchema.safeParse({
+    tenantId,
+    email: String(formData.get("email") ?? ""),
+  });
+
+  if (!parsed.success) {
+    return {
+      ok: false,
+      message: parsed.error.issues[0]?.message ?? "Datos inválidos",
+    };
   }
+
+  const { email } = parsed.data;
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
@@ -46,13 +62,19 @@ export async function inviteTenantMember(formData: FormData) {
   });
 
   if (inviteError) {
-    throw new Error(inviteError.message);
+    return {
+      ok: false,
+      message: inviteError.message,
+    };
   }
 
   const userId = invited.user?.id;
 
   if (!userId) {
-    throw new Error("No se pudo crear/invitar usuario");
+    return {
+      ok: false,
+      message: "No se pudo crear/invitar usuario",
+    };
   }
 
   const { error: roleError } = await supabaseAdmin.from("user_roles").insert({
@@ -62,10 +84,18 @@ export async function inviteTenantMember(formData: FormData) {
   });
 
   if (roleError && !roleError.message.toLowerCase().includes("duplicate")) {
-    throw new Error(roleError.message);
+    return {
+      ok: false,
+      message: roleError.message,
+    };
   }
 
   revalidatePath("/dashboard/users");
+
+  return {
+    ok: true,
+    message: "Funcionario invitado correctamente",
+  };
 }
 
 export async function removeTenantMember(formData: FormData) {

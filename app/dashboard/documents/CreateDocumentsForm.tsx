@@ -3,9 +3,9 @@
 import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-
 import { Button, Card, Input } from "@/components/ui";
 import { supabase } from "@/lib/supabase";
+import { documentSchema } from "@/schemas/document";
 
 export default function CreateDocumentForm({ tenantId }: { tenantId: string }) {
   const router = useRouter();
@@ -14,10 +14,17 @@ export default function CreateDocumentForm({ tenantId }: { tenantId: string }) {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const parsed = documentSchema.safeParse({
+      title,
+      description: "",
+    });
 
-    const cleanTitle = title.trim();
+    if (!parsed.success) {
+      alert(parsed.error.issues[0]?.message ?? "Datos inválidos");
+      return;
+    }
 
-    if (!cleanTitle) return;
+    const { title: cleanTitle } = parsed.data;
 
     setSaving(true);
 

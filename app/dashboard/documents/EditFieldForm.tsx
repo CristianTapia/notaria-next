@@ -3,9 +3,9 @@
 import { Check, Pencil, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-
 import { Badge, Button, Input, Modal, Select } from "@/components/ui";
 import { supabase } from "@/lib/supabase";
+import { fieldSchema } from "@/schemas/field";
 
 const FIELD_TYPES = [
   { value: "text", label: "Texto corto" },
@@ -50,18 +50,32 @@ export default function EditFieldForm({ field }: { field: Field }) {
   };
 
   const save = async () => {
-    const cleanLabel = label.trim();
+    const parsed = fieldSchema.safeParse({
+      label,
+      fieldType,
+      required,
+      placeholder,
+      optionsText,
+    });
 
-    if (!cleanLabel) {
-      alert("La pregunta es requerida");
+    if (!parsed.success) {
+      alert(parsed.error.issues[0]?.message ?? "Datos inválidos");
       return;
     }
+
+    const {
+      label: cleanLabel,
+      fieldType: cleanFieldType,
+      required: cleanRequired,
+      placeholder: cleanPlaceholder,
+      optionsText: cleanOptionsText,
+    } = parsed.data;
 
     setSaving(true);
 
     const options =
-      fieldType === "select"
-        ? optionsText
+      cleanFieldType === "select"
+        ? (cleanOptionsText ?? "")
             .split(",")
             .map((option) => option.trim())
             .filter(Boolean)
@@ -71,9 +85,9 @@ export default function EditFieldForm({ field }: { field: Field }) {
       .from("document_fields")
       .update({
         label: cleanLabel,
-        field_type: fieldType,
-        required,
-        placeholder: placeholder.trim() || null,
+        field_type: cleanFieldType,
+        required: cleanRequired,
+        placeholder: cleanPlaceholder || null,
         options,
       })
       .eq("id", field.id);

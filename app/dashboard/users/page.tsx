@@ -1,10 +1,11 @@
-import { Mail, Trash2, UserRound, Users } from "lucide-react";
+import { Trash2, UserRound, Users } from "lucide-react";
 import { redirect } from "next/navigation";
 
-import { Badge, Button, Card, Input, PageHeader } from "@/components/ui";
+import { Badge, Button, Card, PageHeader } from "@/components/ui";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { inviteTenantMember, removeTenantMember } from "./actions";
+import { removeTenantMember } from "./actions";
+import InviteMemberForm from "./InviteMemberForm";
 
 type RoleRow = {
   id: string;
@@ -78,20 +79,7 @@ export default async function UsersPage() {
       </PageHeader>
 
       <Card>
-        <form action={inviteTenantMember}>
-          <p className="mb-3 text-xs font-medium uppercase tracking-wide text-[var(--color-muted)]">
-            Invitar funcionario
-          </p>
-
-          <div className="flex min-w-0 flex-col gap-2 sm:flex-row">
-            <Input name="email" type="email" required placeholder="correo@ejemplo.com" className="min-w-0 flex-1" />
-
-            <Button className="w-full sm:w-auto">
-              <Mail className="h-4 w-4" />
-              Invitar
-            </Button>
-          </div>
-        </form>
+        <InviteMemberForm />
       </Card>
 
       <div className="mt-6 min-w-0 space-y-3">
@@ -139,7 +127,9 @@ export default async function UsersPage() {
             </div>
 
             <p className="mt-4 break-words font-medium">No hay usuarios asignados</p>
-            <p className="mt-1 break-words text-sm text-[var(--color-muted)]">Invita al primer funcionario para comenzar.</p>
+            <p className="mt-1 break-words text-sm text-[var(--color-muted)]">
+              Invita al primer funcionario para comenzar.
+            </p>
           </Card>
         )}
       </div>

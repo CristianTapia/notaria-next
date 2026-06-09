@@ -42,6 +42,29 @@ function formatDate(date: string) {
   return `${day}-${month}-${year} ${hours}:${minutes}`;
 }
 
+function RequestMiniCard({ request }: { request: StoredClientRequest }) {
+  return (
+    <div className="flex items-center gap-4 rounded-2xl border border-[var(--color-border)] bg-white/85 p-4 shadow-sm">
+      <div className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-slate-100 text-[var(--color-navy)]">
+        <FileText className="h-5 w-5" />
+      </div>
+
+      <div className="min-w-0 flex-1">
+        <h3 className="break-words text-sm font-medium">{request.documentTitle}</h3>
+
+        <div className="mt-1 flex items-center gap-1.5 text-xs text-[var(--color-muted)]">
+          <Clock className="h-3.5 w-3.5" />
+          <span>{formatDate(request.createdAt)}</span>
+        </div>
+      </div>
+
+      <Badge variant={STATUS_VARIANT[request.status]} className="shrink-0">
+        {STATUS_LABEL[request.status]}
+      </Badge>
+    </div>
+  );
+}
+
 export default function ClientRequestsList({ tenantId }: { tenantId: string }) {
   const [clientRequests, setClientRequests] = useState<StoredClientRequest[]>([]);
 
@@ -106,13 +129,33 @@ export default function ClientRequestsList({ tenantId }: { tenantId: string }) {
   }, [tenantId]);
 
   useEffect(() => {
-    const hasActiveRequests = clientRequests.some((request) => !isTerminalClientRequestStatus(request.status));
+    const activeRequestIds = clientRequests
+      .filter((request) => !isTerminalClientRequestStatus(request.status))
+      .map((request) => request.requestId);
 
-    if (!hasActiveRequests) return;
+    if (activeRequestIds.length === 0) return;
 
-    const intervalId = window.setInterval(() => {
-      refreshClientRequests();
-    }, 7000);
+    const activeIds = new Set(activeRequestIds);
+
+    const channel = supabase
+      .channel(`client-requests-${tenantId}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "document_requests",
+          filter: `tenant_id=eq.${tenantId}`,
+        },
+        (payload) => {
+          const updatedId = typeof payload.new?.id === "string" ? payload.new.id : null;
+
+          if (!updatedId || !activeIds.has(updatedId)) return;
+
+          refreshClientRequests();
+        },
+      )
+      .subscribe();
 
     const handleVisibilityChange = () => {
       if (document.visibilityState === "visible") {
@@ -123,54 +166,63 @@ export default function ClientRequestsList({ tenantId }: { tenantId: string }) {
     document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
-      window.clearInterval(intervalId);
+      supabase.removeChannel(channel);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, [clientRequests, refreshClientRequests]);
+  }, [tenantId, clientRequests, refreshClientRequests]);
 
   if (clientRequests.length === 0) return null;
 
+  const activeRequests = clientRequests.filter((request) => !isTerminalClientRequestStatus(request.status));
+
+  const archivedRequests = clientRequests.filter((request) => isTerminalClientRequestStatus(request.status));
+
   return (
-    <section className="min-w-0 rounded-3xl border border-[var(--color-border)] bg-white/70 p-4 shadow-sm">
-      <div className="mb-4 flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="min-w-0">
-          <h2 className="text-lg font-medium">Mis solicitudes</h2>
-          <p className="mt-1 text-xs text-[var(--color-muted)]">Seguimiento desde este teléfono</p>
-        </div>
-
-        <div className="inline-flex w-fit items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1 text-xs text-[var(--color-muted)]">
-          <RefreshCw className="h-3.5 w-3.5" />
-          Auto
-        </div>
-      </div>
-
-      <div className="space-y-3">
-        {clientRequests.map((request) => (
-          <div
-            key={request.requestId}
-            className="flex min-w-0 flex-col gap-3 rounded-2xl border border-[var(--color-border)] bg-white/85 p-4 shadow-sm sm:flex-row sm:items-center sm:gap-4"
-          >
-            <div className="flex min-w-0 gap-3 sm:flex-1 sm:items-center">
-              <div className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-slate-100 text-[var(--color-navy)]">
-                <FileText className="h-5 w-5" />
-              </div>
-
-              <div className="min-w-0 flex-1">
-                <h3 className="break-words text-sm font-medium">{request.documentTitle}</h3>
-
-                <div className="mt-1 flex min-w-0 items-center gap-1.5 text-xs text-[var(--color-muted)]">
-                  <Clock className="h-3.5 w-3.5 shrink-0" />
-                  <span className="min-w-0 break-words">{formatDate(request.createdAt)}</span>
-                </div>
-              </div>
+    <section className="space-y-4">
+      {activeRequests.length > 0 && (
+        <div className="rounded-3xl border border-[var(--color-border)] bg-white/70 p-4 shadow-sm">
+          <div className="mb-4 flex items-center justify-between gap-3">
+            <div>
+              <h2 className="text-lg font-medium">Mis solicitudes activas</h2>
+              <p className="mt-1 text-xs text-[var(--color-muted)]">Seguimiento desde este teléfono</p>
             </div>
 
-            <Badge variant={STATUS_VARIANT[request.status]} className="w-fit shrink-0">
-              {STATUS_LABEL[request.status]}
-            </Badge>
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1 text-xs text-[var(--color-muted)]">
+              <RefreshCw className="h-3.5 w-3.5" />
+              Auto
+            </div>
           </div>
-        ))}
-      </div>
+
+          <div className="space-y-3">
+            {activeRequests.map((request) => (
+              <RequestMiniCard key={request.requestId} request={request} />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {archivedRequests.length > 0 && (
+        <details className="rounded-3xl border border-[var(--color-border)] bg-white/50 p-4 shadow-sm">
+          <summary className="cursor-pointer list-none">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <h2 className="text-base font-medium">Historial</h2>
+                <p className="mt-1 text-xs text-[var(--color-muted)]">
+                  {archivedRequests.length} solicitudes finalizadas
+                </p>
+              </div>
+
+              <span className="rounded-full bg-slate-100 px-3 py-1 text-xs text-[var(--color-muted)]">Ver</span>
+            </div>
+          </summary>
+
+          <div className="mt-4 space-y-3">
+            {archivedRequests.map((request) => (
+              <RequestMiniCard key={request.requestId} request={request} />
+            ))}
+          </div>
+        </details>
+      )}
     </section>
   );
 }

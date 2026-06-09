@@ -6,6 +6,7 @@ import { useState } from "react";
 
 import { Button, Input, Modal, Select } from "@/components/ui";
 import { supabase } from "@/lib/supabase";
+import { fieldSchema } from "@/schemas/field";
 
 const FIELD_TYPES = [
   { value: "text", label: "Texto corto" },
@@ -35,20 +36,29 @@ export default function CreateFieldForm({ documentId, nextSortOrder }: { documen
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const cleanLabel = label.trim();
+    const parsed = fieldSchema.safeParse({
+      label,
+      fieldType,
+      required,
+    });
 
-    if (!cleanLabel) return;
+    if (!parsed.success) {
+      alert(parsed.error.issues[0]?.message ?? "Datos inválidos");
+      return;
+    }
+
+    const { label: cleanLabel, fieldType: cleanFieldType, required: cleanRequired } = parsed.data;
 
     setSaving(true);
 
     const { error } = await supabase.from("document_fields").insert({
       document_id: documentId,
       label: cleanLabel,
-      field_type: fieldType,
-      required,
+      field_type: cleanFieldType,
+      required: cleanRequired,
       sort_order: nextSortOrder,
       placeholder: null,
-      options: fieldType === "select" ? ["Opción 1"] : null,
+      options: cleanFieldType === "select" ? ["Opción 1"] : null,
     });
 
     setSaving(false);

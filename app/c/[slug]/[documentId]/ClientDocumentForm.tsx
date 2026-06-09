@@ -116,12 +116,24 @@ export default function ClientDocumentForm({ doc, fields, slug }: { doc: Doc; fi
   useEffect(() => {
     if (!requestId || !trackingToken) return;
 
-    const intervalId = window.setInterval(() => {
-      refreshCurrentRequest();
-    }, 30000);
+    const channel = supabase
+      .channel(`client-request-${requestId}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "document_requests",
+          filter: `id=eq.${requestId}`,
+        },
+        () => {
+          refreshCurrentRequest();
+        },
+      )
+      .subscribe();
 
     return () => {
-      window.clearInterval(intervalId);
+      supabase.removeChannel(channel);
     };
   }, [requestId, trackingToken, refreshCurrentRequest]);
 
@@ -334,7 +346,9 @@ export default function ClientDocumentForm({ doc, fields, slug }: { doc: Doc; fi
         <div className="rounded-xl border border-[#EAC77E] bg-[#FFF8E8] px-4 py-3 text-sm text-[#7A4A00]">
           <div className="flex gap-2">
             <Info className="mt-0.5 h-4 w-4 shrink-0" />
-            <p className="min-w-0 break-words">Después de enviar verá una pantalla de seguimiento con el estado actualizado automáticamente.</p>
+            <p className="min-w-0 break-words">
+              Después de enviar verá una pantalla de seguimiento con el estado actualizado automáticamente.
+            </p>
           </div>
         </div>
 
