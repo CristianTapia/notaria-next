@@ -1,6 +1,6 @@
 import { CalendarDays, Clock } from "lucide-react";
 
-import { Badge, Card } from "@/components/ui";
+import { Badge, Card, DataGrid } from "@/components/ui";
 import RequestStatusSelect from "./RequestStatusSelect";
 
 type RequestStatus = "pending" | "in_progress" | "ready" | "delivered" | "cancelled";
@@ -32,6 +32,14 @@ const STATUS_BADGE_VARIANT: Record<RequestStatus, "gold" | "blue" | "green" | "n
   cancelled: "red",
 };
 
+const STATUS_ACCENT: Record<RequestStatus, string> = {
+  pending: "border-l-4 border-l-[var(--color-gold)]",
+  in_progress: "border-l-4 border-l-sky-500",
+  ready: "border-l-4 border-l-emerald-500",
+  delivered: "",
+  cancelled: "",
+};
+
 function formatRequestDateParts(date: string) {
   const parsedDate = new Date(date);
 
@@ -48,19 +56,41 @@ function formatRequestDateParts(date: string) {
   };
 }
 
-export default function RequestCard({ request, isNew = false }: { request: RequestRow; isNew?: boolean }) {
+export default function RequestCard({
+  request,
+  isNew = false,
+  now,
+}: {
+  request: RequestRow;
+  isNew?: boolean;
+  now: number;
+}) {
   const dateParts = formatRequestDateParts(request.created_at);
+  const needsAttention = request.status === "pending";
+  const waitingMinutes = Math.max(0, Math.floor((now - new Date(request.created_at).getTime()) / (1000 * 60)));
+  const isLongWaiting = needsAttention && waitingMinutes >= 15;
 
   return (
     <Card
-      className={`relative overflow-hidden transition ${
-        isNew ? "border-red-300 bg-red-50/60 shadow-[0_0_0_4px_rgba(239,68,68,0.10)]" : ""
-      }`}
+      className={`relative overflow-hidden transition ${STATUS_ACCENT[request.status]} ${
+        needsAttention
+          ? isLongWaiting
+            ? "shadow-[0_0_0_1px_rgba(239,68,68,0.22),0_0_30px_rgba(239,68,68,0.10)]"
+            : "shadow-[0_0_0_1px_rgba(217,144,39,0.18),0_0_24px_rgba(217,144,39,0.08)]"
+          : ""
+      } ${isNew ? "border-red-300 bg-red-50/60 shadow-[0_0_0_4px_rgba(239,68,68,0.10)]" : ""}`}
     >
       {isNew && (
         <div className="pointer-events-none absolute right-4 top-4">
           <span className="absolute inset-0 h-3 w-3 rounded-full bg-red-500 opacity-30 animate-[ping_2s_cubic-bezier(0,0,0.2,1)_infinite]" />
           <span className="relative block h-3 w-3 rounded-full bg-red-500" />
+        </div>
+      )}
+
+      {needsAttention && !isNew && (
+        <div className="pointer-events-none absolute right-4 top-4">
+          <span className="absolute inset-0 h-3 w-3 rounded-full bg-[var(--color-gold)] opacity-30 animate-[ping_2.5s_cubic-bezier(0,0,0.2,1)_infinite]" />
+          <span className="relative block h-3 w-3 rounded-full bg-[var(--color-gold)]" />
         </div>
       )}
 
@@ -72,6 +102,18 @@ export default function RequestCard({ request, isNew = false }: { request: Reque
             {isNew && (
               <Badge variant="red" className="shrink-0">
                 Nueva
+              </Badge>
+            )}
+
+            {needsAttention && !isNew && (
+              <Badge variant="gold" className="shrink-0 animate-pulse">
+                Sin tomar
+              </Badge>
+            )}
+
+            {isLongWaiting && (
+              <Badge variant="red" className="shrink-0 animate-pulse">
+                {waitingMinutes} min esperando
               </Badge>
             )}
           </div>
@@ -103,20 +145,13 @@ export default function RequestCard({ request, isNew = false }: { request: Reque
       </div>
 
       {request.data && (
-        <div className="mt-4 overflow-hidden rounded-xl border border-[var(--color-border)] bg-white/70">
-          <div className="grid grid-cols-[0.9fr_1.1fr] border-b border-[var(--color-border)] bg-[var(--color-cream-input)] px-4 py-2 text-xs font-medium uppercase tracking-wide text-[var(--color-muted)]">
-            <span>Campo</span>
-            <span>Valor</span>
-          </div>
-
-          <div className="divide-y divide-[var(--color-border)]">
-            {Object.entries(request.data).map(([key, value]) => (
-              <div key={key} className="grid grid-cols-[0.9fr_1.1fr] gap-3 px-4 py-3 text-sm">
-                <p className="min-w-0 break-words text-[var(--color-muted)]">{key}</p>
-                <p className="min-w-0 break-words font-medium">{String(value || "—")}</p>
-              </div>
-            ))}
-          </div>
+        <div className="mt-4">
+          <DataGrid
+            items={Object.entries(request.data).map(([key, value]) => ({
+              label: key,
+              value: String(value || "—"),
+            }))}
+          />
         </div>
       )}
     </Card>

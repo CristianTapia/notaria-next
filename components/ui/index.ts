@@ -8,3 +8,4 @@ export { PageHeader } from "./PageHeader";
 export { Switch } from "./Switch";
 export { Modal } from "./Modal";
 export { CollapsibleCard } from "./CollapsibleCard";
+export { DataGrid } from "./DataGrid";

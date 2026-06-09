@@ -1,7 +1,7 @@
 "use client";
 
 import { Bell } from "lucide-react";
-import { useState, useSyncExternalStore } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 
 import { Button, PageHeader } from "@/components/ui";
 import RequestCard from "./RequestCard";
@@ -28,6 +28,14 @@ const FILTERS = [
   { value: "ready", label: "Listo" },
   { value: "archived", label: "Archivadas" },
 ] as const;
+
+const STATUS_PRIORITY: Record<RequestStatus, number> = {
+  pending: 1,
+  in_progress: 2,
+  ready: 3,
+  delivered: 4,
+  cancelled: 5,
+};
 
 const REQUESTS_SOUND_EVENT = "requests-sound-change";
 let soundPreferenceHydrated = false;
@@ -67,6 +75,18 @@ export default function RequestsClient({ tenantId, requests }: { tenantId: strin
     getServerSoundPreferenceSnapshot,
   );
 
+  const [now, setNow] = useState(() => Date.now());
+
+  useEffect(() => {
+    const intervalId = window.setInterval(() => {
+      setNow(Date.now());
+    }, 60000);
+
+    return () => {
+      window.clearInterval(intervalId);
+    };
+  }, []);
+
   const toggleSound = async () => {
     if (soundEnabled) {
       localStorage.removeItem("requests-sound");
@@ -84,7 +104,15 @@ export default function RequestsClient({ tenantId, requests }: { tenantId: strin
     }
   };
 
-  const filteredRequests = requests.filter((request) => {
+  const sortedRequests = [...requests].sort((a, b) => {
+    const statusDiff = STATUS_PRIORITY[a.status] - STATUS_PRIORITY[b.status];
+
+    if (statusDiff !== 0) return statusDiff;
+
+    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+  });
+
+  const filteredRequests = sortedRequests.filter((request) => {
     if (filter === "active") {
       return !["delivered", "cancelled"].includes(request.status);
     }
@@ -140,9 +168,9 @@ export default function RequestsClient({ tenantId, requests }: { tenantId: strin
             key={item.value}
             type="button"
             onClick={() => setFilter(item.value)}
-            className={`min-w-0 rounded-full px-4 py-2 text-xs font-medium break-words transition ${
+            className={`min-w-0 rounded-full px-4 py-2 text-xs font-medium break-words transition-all duration-200 ${
               filter === item.value
-                ? "bg-[var(--color-navy)] text-white"
+                ? "bg-[var(--color-navy)] text-white shadow-sm"
                 : "bg-white/80 text-[var(--color-muted)] hover:bg-[var(--color-cream-input)]"
             }`}
           >
@@ -159,7 +187,12 @@ export default function RequestsClient({ tenantId, requests }: { tenantId: strin
           <p className="text-sm text-[var(--color-muted)]">No hay solicitudes para este filtro.</p>
         ) : (
           filteredRequests.map((request) => (
-            <RequestCard key={request.id} request={request} isNew={highlightedRequestIds.includes(request.id)} />
+            <RequestCard
+              key={request.id}
+              request={request}
+              isNew={highlightedRequestIds.includes(request.id)}
+              now={now}
+            />
           ))
         )}
       </div>
