@@ -3,7 +3,7 @@
 import { useActionState, useState } from "react";
 import { Plus } from "lucide-react";
 import { useActionToast } from "@/hooks/useActionToast";
-import { Button, Card, Input } from "@/components/ui";
+import { Button, Card, FormField, Input } from "@/components/ui";
 import { createTenant } from "./actions";
 
 const initialState = {
@@ -44,17 +44,21 @@ export default function CreateTenantForm() {
     <Card>
       <form action={submitAction}>
         <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
-          <Input
-            name="name"
-            required
-            disabled={pending}
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Nombre de la notaría"
-          />
+          <FormField label="Nombre de la notaría" required>
+            <Input
+              name="name"
+              required
+              disabled={pending}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Nombre de la notaría"
+            />
+          </FormField>
 
-          <div className="flex min-h-11 min-w-0 items-center rounded-lg border border-[#DCD5C7] bg-[var(--color-cream-input)] px-4 font-mono text-sm break-all text-[var(--color-muted)]">
-            /c/{slugPreview || "slug-url"}
+          <div className="sm:pt-7">
+            <div className="flex min-h-11 min-w-0 items-center rounded-lg border border-[#DCD5C7] bg-[var(--color-cream-input)] px-4 font-mono text-sm break-all text-[var(--color-muted)]">
+              /c/{slugPreview || "slug-url"}
+            </div>
           </div>
         </div>
 

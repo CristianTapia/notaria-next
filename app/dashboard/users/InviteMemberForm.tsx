@@ -17,8 +17,8 @@ export default function InviteMemberForm() {
 
   return (
     <form action={formAction}>
-      <FormField label="Correo" description="Se enviará una invitación al funcionario." required>
-        <div className="flex min-w-0 flex-col gap-2 sm:flex-row">
+      <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-end">
+        <FormField label="Correo" description="Se enviará una invitación al funcionario." required className="flex-1">
           <Input
             className="min-w-0 flex-1"
             name="email"
@@ -26,12 +26,13 @@ export default function InviteMemberForm() {
             disabled={pending}
             placeholder="correo@ejemplo.com"
           />
-          <Button disabled={pending} className="w-full sm:w-auto">
-            <Mail className="h-4 w-4" />
-            {pending ? "Invitando..." : "Invitar"}
-          </Button>
-        </div>
-      </FormField>
+        </FormField>
+
+        <Button disabled={pending} className="w-full sm:w-auto">
+          <Mail className="h-4 w-4" />
+          {pending ? "Invitando..." : "Invitar"}
+        </Button>
+      </div>
     </form>
   );
 }

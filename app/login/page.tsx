@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Eye, EyeOff, ScrollText } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { Button, FormField, Input } from "@/components/ui";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 
@@ -69,28 +70,23 @@ export default function LoginPage() {
           </div>
 
           <div className="mt-8 space-y-5">
-            <div>
-              <label className="mb-2 block break-words text-sm font-medium">Correo electrónico</label>
-
-              <input
+            <FormField label="Correo electrónico" required>
+              <Input
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="h-11 w-full rounded-lg border border-[#DCD5C7] bg-[var(--color-cream-input)] px-3 text-sm outline-none transition focus:border-[var(--color-navy)] focus:ring-4 focus:ring-[var(--color-navy)]/10"
               />
-            </div>
+            </FormField>
 
-            <div>
-              <label className="mb-2 block break-words text-sm font-medium">Contraseña</label>
-
+            <FormField label="Contraseña" required>
               <div className="relative min-w-0">
-                <input
+                <Input
                   type={showPassword ? "text" : "password"}
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="h-11 w-full rounded-lg border border-[#DCD5C7] bg-[var(--color-cream-input)] px-3 pr-11 text-sm outline-none transition focus:border-[var(--color-navy)] focus:ring-4 focus:ring-[var(--color-navy)]/10"
+                  className="pr-11"
                 />
 
                 <button
@@ -102,14 +98,14 @@ export default function LoginPage() {
                   {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                 </button>
               </div>
-            </div>
+            </FormField>
 
-            <button
+            <Button
               disabled={busy}
-              className="h-12 w-full rounded-lg bg-[var(--color-navy)] text-sm font-medium text-white transition hover:bg-[var(--color-navy-soft)] disabled:opacity-60"
+              className="h-12 w-full"
             >
               {busy ? "Entrando..." : "Entrar"}
-            </button>
+            </Button>
           </div>
 
           <button

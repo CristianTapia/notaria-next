@@ -1,10 +1,10 @@
 "use client";
 
-import { Plus } from "lucide-react";
+import { Plus, ListPlus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Button, Input, Modal, Select } from "@/components/ui";
+import { Button, FormField, Input, Modal, Select } from "@/components/ui";
 import { supabase } from "@/lib/supabase";
 import { fieldSchema } from "@/schemas/field";
 
@@ -89,29 +89,36 @@ export default function CreateFieldForm({ documentId, nextSortOrder }: { documen
           if (saving) return;
           setOpen(false);
         }}
+        icon={<ListPlus className="h-6 w-6" />}
+        size="md"
+        disableClose={saving}
       >
         <form onSubmit={submit} className="space-y-3">
-          <Input
-            value={label}
-            onChange={(e) => setLabel(e.target.value)}
-            required
-            disabled={saving}
-            placeholder="Texto de la pregunta"
-          />
+          <FormField label="Pregunta" required>
+            <Input
+              value={label}
+              onChange={(e) => setLabel(e.target.value)}
+              required
+              disabled={saving}
+              placeholder="Texto de la pregunta"
+            />
+          </FormField>
 
           <div className="flex min-w-0 flex-col gap-2 sm:flex-row">
-            <Select
-              value={fieldType}
-              onChange={(e) => setFieldType(e.target.value)}
-              disabled={saving}
-              className="flex-1"
-            >
-              {FIELD_TYPES.map((type) => (
-                <option key={type.value} value={type.value}>
-                  {type.label}
-                </option>
-              ))}
-            </Select>
+            <FormField label="Tipo de campo" required className="flex-1">
+              <Select
+                value={fieldType}
+                onChange={(e) => setFieldType(e.target.value)}
+                disabled={saving}
+                className="flex-1"
+              >
+                {FIELD_TYPES.map((type) => (
+                  <option key={type.value} value={type.value}>
+                    {type.label}
+                  </option>
+                ))}
+              </Select>
+            </FormField>
 
             <button
               type="button"

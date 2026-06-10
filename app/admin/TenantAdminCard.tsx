@@ -3,7 +3,7 @@
 import { Check, Pencil, Trash2, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import { deleteTenant, updateTenant } from "./actions";
-import { Badge, Button, Card, CollapsibleCard, Input } from "@/components/ui";
+import { Badge, Button, Card, CollapsibleCard, FormField, Input } from "@/components/ui";
 import { UserRound } from "lucide-react";
 
 type TenantRow = {
@@ -59,7 +59,9 @@ export default function TenantAdminCard({ tenant, team }: { tenant: TenantRow; t
         <div className="flex min-w-0 flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0 flex-1">
             {editing ? (
-              <Input name="name" required value={name} onChange={(e) => setName(e.target.value)} className="max-w-md" />
+              <FormField label="Nombre de la notaría" required>
+                <Input name="name" required value={name} onChange={(e) => setName(e.target.value)} className="max-w-md" />
+              </FormField>
             ) : (
               <>
                 <input type="hidden" name="name" value={tenant.name} />

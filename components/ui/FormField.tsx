@@ -2,15 +2,17 @@ export function FormField({
   label,
   description,
   required,
+  className = "",
   children,
 }: {
   label: string;
   description?: string;
   required?: boolean;
+  className?: string;
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-w-0 space-y-2">
+    <div className={`min-w-0 space-y-2 ${className}`}>
       <div>
         <label className="block break-words text-sm font-medium">
           {label}

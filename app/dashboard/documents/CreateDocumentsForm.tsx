@@ -3,7 +3,7 @@
 import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Button, Card, Input } from "@/components/ui";
+import { Button, Card, FormField, Input } from "@/components/ui";
 import { supabase } from "@/lib/supabase";
 import { documentSchema } from "@/schemas/document";
 import { toast } from "sonner";
@@ -53,15 +53,17 @@ export default function CreateDocumentForm({ tenantId }: { tenantId: string }) {
       <form onSubmit={submit}>
         <p className="mb-3 text-xs font-medium uppercase tracking-wide text-[var(--color-muted)]">Crear documento</p>
 
-        <div className="flex min-w-0 flex-col gap-2 sm:flex-row">
-          <Input
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            required
-            disabled={saving}
-            placeholder="Nombre del documento"
-            className="min-w-0 flex-1"
-          />
+        <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-end">
+          <FormField label="Documento" required className="flex-1">
+            <Input
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+              disabled={saving}
+              placeholder="Nombre del documento"
+              className="min-w-0 flex-1"
+            />
+          </FormField>
 
           <Button type="submit" disabled={saving} className="w-full sm:w-auto">
             <Plus className="h-4 w-4" />

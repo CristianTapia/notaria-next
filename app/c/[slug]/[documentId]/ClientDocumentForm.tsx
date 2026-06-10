@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Button, Card } from "@/components/ui";
+import { Button, Card, FormField, Input, Select, Textarea } from "@/components/ui";
 import { saveClientRequest } from "@/lib/client-requests-storage";
 import { supabase } from "@/lib/supabase";
 import { BadgeCheck, CheckCircle2, CircleX, Clock, Info, LoaderCircle } from "lucide-react";
@@ -301,27 +301,20 @@ export default function ClientDocumentForm({ doc, fields, slug }: { doc: Doc; fi
           <p className="text-sm text-[var(--color-muted)]">Este documento no requiere información adicional.</p>
         ) : (
           fields.map((field) => (
-            <div key={field.id} className="min-w-0">
-              <label className="mb-2 block break-words text-sm font-medium">
-                {field.label}
-                {field.required && <span className="ml-1 text-[var(--color-gold)]">*</span>}
-              </label>
-
+            <FormField key={field.id} label={field.label} required={field.required}>
               {field.field_type === "textarea" ? (
-                <textarea
+                <Textarea
                   required={field.required}
                   rows={3}
                   placeholder={field.placeholder ?? ""}
                   value={values[field.id] ?? ""}
                   onChange={(e) => setValues((prev) => ({ ...prev, [field.id]: e.target.value }))}
-                  className="w-full rounded-lg border border-[#DCD5C7] bg-[var(--color-cream-input)] px-3 py-2 text-sm outline-none transition focus:border-[var(--color-navy)] focus:ring-4 focus:ring-[var(--color-navy)]/10"
                 />
               ) : field.field_type === "select" ? (
-                <select
+                <Select
                   required={field.required}
                   value={values[field.id] ?? ""}
                   onChange={(e) => setValues((prev) => ({ ...prev, [field.id]: e.target.value }))}
-                  className="h-11 w-full rounded-lg border border-[#DCD5C7] bg-[var(--color-cream-input)] px-3 text-sm outline-none transition focus:border-[var(--color-navy)] focus:ring-4 focus:ring-[var(--color-navy)]/10"
                 >
                   <option value="">Seleccione</option>
                   {(field.options ?? []).map((option) => (
@@ -329,18 +322,17 @@ export default function ClientDocumentForm({ doc, fields, slug }: { doc: Doc; fi
                       {option}
                     </option>
                   ))}
-                </select>
+                </Select>
               ) : (
-                <input
+                <Input
                   type={getInputType(field.field_type)}
                   required={field.required}
                   placeholder={field.placeholder ?? ""}
                   value={values[field.id] ?? ""}
                   onChange={(e) => setValues((prev) => ({ ...prev, [field.id]: e.target.value }))}
-                  className="h-11 w-full rounded-lg border border-[#DCD5C7] bg-[var(--color-cream-input)] px-3 text-sm outline-none transition focus:border-[var(--color-navy)] focus:ring-4 focus:ring-[var(--color-navy)]/10"
                 />
               )}
-            </div>
+            </FormField>
           ))
         )}
 

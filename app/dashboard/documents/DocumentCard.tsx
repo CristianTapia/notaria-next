@@ -8,6 +8,7 @@ import CreateFieldForm from "./CreateFieldForm";
 import DocumentActiveToggle from "./DocumentActiveToggle";
 import EditDocumentForm from "./EditDocumentForm";
 import EditFieldForm from "./EditFieldForm";
+import DeleteDocumentButton from "./DeleteDocumentButton";
 
 type DocumentFieldRow = {
   id: string;
@@ -65,6 +66,7 @@ export default function DocumentCard({ doc }: { doc: DocumentRow }) {
           <DocumentActiveToggle documentId={doc.id} initialActive={doc.active} />
 
           <EditDocumentForm documentId={doc.id} initialTitle={doc.title} initialDescription={doc.description} />
+          <DeleteDocumentButton documentId={doc.id} documentTitle={doc.title} />
         </div>
       </div>
 

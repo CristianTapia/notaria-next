@@ -1,8 +1,8 @@
 "use client";
 
-import { Check, Pencil } from "lucide-react";
+import { Check, Pencil, FileText } from "lucide-react";
 import { useState } from "react";
-import { Button, Input, Modal, Textarea } from "@/components/ui";
+import { Button, FormField, Input, Modal, Textarea } from "@/components/ui";
 import { supabase } from "@/lib/supabase";
 import { documentSchema } from "@/schemas/document";
 import { toast } from "sonner";
@@ -75,22 +75,29 @@ export default function EditDocumentForm({
           reset();
           setOpen(false);
         }}
+        icon={<FileText className="h-6 w-6" />}
+        size="md"
+        disableClose={saving}
       >
         <div className="space-y-3">
-          <Input
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            disabled={saving}
-            placeholder="Título del documento"
-          />
+          <FormField label="Título" required>
+            <Input
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              disabled={saving}
+              placeholder="Título del documento"
+            />
+          </FormField>
 
-          <Textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            disabled={saving}
-            placeholder="Descripción"
-            rows={3}
-          />
+          <FormField label="Descripción">
+            <Textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              disabled={saving}
+              placeholder="Descripción"
+              rows={3}
+            />
+          </FormField>
 
           <div className="flex flex-col gap-2 pt-2 sm:flex-row">
             <Button type="button" onClick={save} disabled={saving} className="w-full sm:w-auto">

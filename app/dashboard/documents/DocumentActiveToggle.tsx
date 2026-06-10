@@ -41,7 +41,7 @@ export default function DocumentActiveToggle({
       disabled={saving}
       loading={saving}
       onClick={toggle}
-      label={active ? "Visible" : "Oculto"}
+      label={active ? "Activo" : "Inactivo"}
     />
   );
 }

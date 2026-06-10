@@ -1,9 +1,9 @@
 "use client";
 
-import { Check, Pencil, Trash2 } from "lucide-react";
+import { Check, Pencil, Trash2, ListChecks } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Badge, Button, Input, Modal, Select } from "@/components/ui";
+import { Badge, Button, FormField, Input, Modal, Select, ConfirmModal } from "@/components/ui";
 import { supabase } from "@/lib/supabase";
 import { fieldSchema } from "@/schemas/field";
 import { toast } from "sonner";
@@ -35,12 +35,13 @@ export default function EditFieldForm({ field }: { field: Field }) {
   const router = useRouter();
 
   const [open, setOpen] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [label, setLabel] = useState(field.label);
   const [fieldType, setFieldType] = useState(field.field_type);
   const [required, setRequired] = useState(field.required);
   const [placeholder, setPlaceholder] = useState(field.placeholder ?? "");
   const [optionsText, setOptionsText] = useState((field.options ?? []).join(", "));
-  const [saving, setSaving] = useState(false);
 
   const reset = () => {
     setLabel(field.label);
@@ -106,9 +107,6 @@ export default function EditFieldForm({ field }: { field: Field }) {
   };
 
   const remove = async () => {
-    const confirmed = confirm("¿Eliminar esta pregunta?");
-    if (!confirmed) return;
-
     setSaving(true);
 
     const { error } = await supabase.from("document_fields").delete().eq("id", field.id);
@@ -150,7 +148,7 @@ export default function EditFieldForm({ field }: { field: Field }) {
           <Button
             type="button"
             variant="icon"
-            onClick={remove}
+            onClick={() => setConfirmDeleteOpen(true)}
             disabled={saving}
             className="hover:text-red-600"
             aria-label="Eliminar campo"
@@ -169,28 +167,35 @@ export default function EditFieldForm({ field }: { field: Field }) {
           reset();
           setOpen(false);
         }}
+        icon={<ListChecks className="h-6 w-6" />}
+        size="md"
+        disableClose={saving}
       >
         <div className="space-y-3">
-          <Input
-            value={label}
-            onChange={(e) => setLabel(e.target.value)}
-            disabled={saving}
-            placeholder="Texto de la pregunta"
-          />
+          <FormField label="Pregunta" required>
+            <Input
+              value={label}
+              onChange={(e) => setLabel(e.target.value)}
+              disabled={saving}
+              placeholder="Texto de la pregunta"
+            />
+          </FormField>
 
           <div className="flex min-w-0 flex-col gap-2 sm:flex-row">
-            <Select
-              value={fieldType}
-              onChange={(e) => setFieldType(e.target.value)}
-              disabled={saving}
-              className="flex-1"
-            >
-              {FIELD_TYPES.map((type) => (
-                <option key={type.value} value={type.value}>
-                  {type.label}
-                </option>
-              ))}
-            </Select>
+            <FormField label="Tipo de campo" required className="flex-1">
+              <Select
+                value={fieldType}
+                onChange={(e) => setFieldType(e.target.value)}
+                disabled={saving}
+                className="flex-1"
+              >
+                {FIELD_TYPES.map((type) => (
+                  <option key={type.value} value={type.value}>
+                    {type.label}
+                  </option>
+                ))}
+              </Select>
+            </FormField>
 
             <button
               type="button"
@@ -206,20 +211,24 @@ export default function EditFieldForm({ field }: { field: Field }) {
             </button>
           </div>
 
-          <Input
-            value={placeholder}
-            onChange={(e) => setPlaceholder(e.target.value)}
-            disabled={saving}
-            placeholder="Texto de ayuda / placeholder"
-          />
+          <FormField label="Texto de ayuda">
+            <Input
+              value={placeholder}
+              onChange={(e) => setPlaceholder(e.target.value)}
+              disabled={saving}
+              placeholder="Texto de ayuda / placeholder"
+            />
+          </FormField>
 
           {fieldType === "select" && (
-            <Input
-              value={optionsText}
-              onChange={(e) => setOptionsText(e.target.value)}
-              disabled={saving}
-              placeholder="Opciones separadas por coma. Ej: Sí, No, No aplica"
-            />
+            <FormField label="Opciones">
+              <Input
+                value={optionsText}
+                onChange={(e) => setOptionsText(e.target.value)}
+                disabled={saving}
+                placeholder="Opciones separadas por coma. Ej: Sí, No, No aplica"
+              />
+            </FormField>
           )}
 
           <div className="flex flex-col gap-2 pt-2 sm:flex-row">
@@ -243,6 +252,23 @@ export default function EditFieldForm({ field }: { field: Field }) {
           </div>
         </div>
       </Modal>
+
+      <ConfirmModal
+        open={confirmDeleteOpen}
+        title="Eliminar pregunta"
+        description="¿Deseas eliminar esta pregunta del formulario?"
+        confirmLabel="Eliminar"
+        danger
+        loading={saving}
+        onClose={() => {
+          if (saving) return;
+          setConfirmDeleteOpen(false);
+        }}
+        onConfirm={async () => {
+          setConfirmDeleteOpen(false);
+          await remove();
+        }}
+      />
     </li>
   );
 }

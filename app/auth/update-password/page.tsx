@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { Button, FormField, Input } from "@/components/ui";
 
 export default function UpdatePasswordPage() {
   const router = useRouter();
@@ -73,19 +74,20 @@ export default function UpdatePasswordPage() {
       <form onSubmit={submit} className="w-full max-w-sm space-y-4 rounded-xl border p-4 sm:p-6">
         <h1 className="break-words text-2xl font-bold">Crear contraseña</h1>
 
-        <input
-          type="password"
-          required
-          minLength={6}
-          placeholder="Nueva contraseña"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-full rounded-md border px-3 py-2"
-        />
+        <FormField label="Nueva contraseña" required>
+          <Input
+            type="password"
+            required
+            minLength={6}
+            placeholder="Nueva contraseña"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </FormField>
 
-        <button disabled={busy} className="w-full rounded-md bg-black py-2 text-white">
+        <Button disabled={busy} className="w-full">
           {busy ? "Guardando..." : "Guardar contraseña"}
-        </button>
+        </Button>
       </form>
     </main>
   );
