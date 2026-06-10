@@ -26,7 +26,7 @@ export default function LoginPage() {
     setBusy(false);
 
     if (error) {
-      toast.error(error.message);
+      toast.error("Correo o contraseña incorrectos");
       return;
     }
 
@@ -45,7 +45,7 @@ export default function LoginPage() {
     });
 
     if (error) {
-      toast.error(error.message);
+      toast.error("No se pudo enviar el correo de recuperación");
       return;
     }
 
@@ -71,12 +71,7 @@ export default function LoginPage() {
 
           <div className="mt-8 space-y-5">
             <FormField label="Correo electrónico" required>
-              <Input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
+              <Input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
             </FormField>
 
             <FormField label="Contraseña" required>
@@ -100,10 +95,7 @@ export default function LoginPage() {
               </div>
             </FormField>
 
-            <Button
-              disabled={busy}
-              className="h-12 w-full"
-            >
+            <Button disabled={busy} className="h-12 w-full">
               {busy ? "Entrando..." : "Entrar"}
             </Button>
           </div>
