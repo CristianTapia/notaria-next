@@ -1,8 +1,8 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import { CheckCircle2, Plus } from "lucide-react";
-
+import { Plus } from "lucide-react";
+import { useActionToast } from "@/hooks/useActionToast";
 import { Button, Card, Input } from "@/components/ui";
 import { createTenant } from "./actions";
 
@@ -27,6 +27,11 @@ export default function CreateTenantForm() {
   const [name, setName] = useState("");
 
   const [state, formAction, pending] = useActionState(createTenant, initialState);
+  useActionToast(state, (currentState) =>
+    currentState.ok && currentState.createdName
+      ? `${currentState.message}: ${currentState.createdName}`
+      : currentState.message,
+  );
 
   const submitAction = async (formData: FormData) => {
     await formAction(formData);
@@ -52,22 +57,6 @@ export default function CreateTenantForm() {
             /c/{slugPreview || "slug-url"}
           </div>
         </div>
-
-        {state.message && (
-          <div
-            className={`mt-4 rounded-xl border px-3 py-2 text-sm ${
-              state.ok ? "border-green-200 bg-green-50 text-green-700" : "border-red-200 bg-red-50 text-red-700"
-            }`}
-          >
-            <div className="flex min-w-0 items-start gap-2">
-              {state.ok && <CheckCircle2 className="h-4 w-4" />}
-              <span className="min-w-0 break-words">
-                {state.message}
-                {state.ok && state.createdName ? `: ${state.createdName}` : ""}
-              </span>
-            </div>
-          </div>
-        )}
 
         <div className="mt-4">
           <Button type="submit" disabled={pending} className="w-full sm:w-auto">

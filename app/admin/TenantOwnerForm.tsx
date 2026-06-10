@@ -2,7 +2,7 @@
 
 import { UserPlus } from "lucide-react";
 
-import { Button, Input, Select } from "@/components/ui";
+import { Button, FormField, Input, Select } from "@/components/ui";
 import { assignTenantOwner } from "./actions";
 
 type TenantOption = {
@@ -13,23 +13,22 @@ type TenantOption = {
 export default function TenantOwnerForm({ tenants }: { tenants: TenantOption[] }) {
   return (
     <form action={assignTenantOwner}>
-      <p className="mb-3 text-xs font-medium uppercase tracking-wide text-[var(--color-muted)]">
-        Invitar dueño de notaría
-      </p>
-
       <div className="space-y-3">
-        <Select name="tenantId" required>
-          <option value="">Seleccione una notaría</option>
+        <FormField label="Notaría" description="Seleccione la notaría que tendrá este propietario." required>
+          <Select name="tenantId" required>
+            <option value="">Seleccione una notaría</option>
 
-          {tenants.map((tenant) => (
-            <option key={tenant.id} value={tenant.id}>
-              {tenant.name}
-            </option>
-          ))}
-        </Select>
+            {tenants.map((tenant) => (
+              <option key={tenant.id} value={tenant.id}>
+                {tenant.name}
+              </option>
+            ))}
+          </Select>
+        </FormField>
 
-        <Input name="email" type="email" required placeholder="correo@ejemplo.com" />
-
+        <FormField label="Correo" description="Se enviará una invitación al/la notario/a." required>
+          <Input name="email" type="email" placeholder="correo@ejemplo.com" />
+        </FormField>
         <Button type="submit" className="w-full">
           <UserPlus className="h-4 w-4" />
           Invitar owner
