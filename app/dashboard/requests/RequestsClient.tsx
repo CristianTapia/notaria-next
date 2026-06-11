@@ -1,12 +1,13 @@
 "use client";
 
 import { Bell, ClipboardList } from "lucide-react";
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useEffect, useState } from "react";
 
 import { Button, Card, PageHeader } from "@/components/ui";
 import RequestCard from "./RequestCard";
 import RequestsRealtime from "./RequestsRealtime";
-import { playNotificationSound } from "./notification-sound";
+import { playNotificationSound } from "../notification-sound";
+import { setRequestsSoundPreference, useRequestsSoundPreference } from "@/hooks/useRequestsSoundPreference";
 
 type RequestStatus = "pending" | "in_progress" | "ready" | "delivered" | "cancelled";
 
@@ -37,43 +38,10 @@ const STATUS_PRIORITY: Record<RequestStatus, number> = {
   cancelled: 5,
 };
 
-const REQUESTS_SOUND_EVENT = "requests-sound-change";
-let soundPreferenceHydrated = false;
-
-function subscribeToSoundPreference(onStoreChange: () => void) {
-  window.addEventListener(REQUESTS_SOUND_EVENT, onStoreChange);
-  window.addEventListener("storage", onStoreChange);
-
-  const timeoutId = window.setTimeout(() => {
-    soundPreferenceHydrated = true;
-    onStoreChange();
-  }, 0);
-
-  return () => {
-    window.clearTimeout(timeoutId);
-    window.removeEventListener(REQUESTS_SOUND_EVENT, onStoreChange);
-    window.removeEventListener("storage", onStoreChange);
-  };
-}
-
-function getSoundPreferenceSnapshot() {
-  if (!soundPreferenceHydrated) return false;
-
-  return localStorage.getItem("requests-sound") === "on";
-}
-
-function getServerSoundPreferenceSnapshot() {
-  return false;
-}
-
 export default function RequestsClient({ tenantId, requests }: { tenantId: string; requests: RequestRow[] }) {
   const [filter, setFilter] = useState("active");
   const [highlightedRequestIds, setHighlightedRequestIds] = useState<string[]>([]);
-  const soundEnabled = useSyncExternalStore(
-    subscribeToSoundPreference,
-    getSoundPreferenceSnapshot,
-    getServerSoundPreferenceSnapshot,
-  );
+  const soundEnabled = useRequestsSoundPreference();
 
   const [now, setNow] = useState(() => Date.now());
 
@@ -89,13 +57,11 @@ export default function RequestsClient({ tenantId, requests }: { tenantId: strin
 
   const toggleSound = async () => {
     if (soundEnabled) {
-      localStorage.removeItem("requests-sound");
-      window.dispatchEvent(new Event(REQUESTS_SOUND_EVENT));
+      setRequestsSoundPreference(false);
       return;
     }
 
-    localStorage.setItem("requests-sound", "on");
-    window.dispatchEvent(new Event(REQUESTS_SOUND_EVENT));
+    setRequestsSoundPreference(true);
 
     playNotificationSound();
 
@@ -136,7 +102,6 @@ export default function RequestsClient({ tenantId, requests }: { tenantId: strin
     <div className="min-w-0">
       <RequestsRealtime
         tenantId={tenantId}
-        soundEnabled={soundEnabled}
         onNewRequest={(requestId) => {
           setHighlightedRequestIds((prev) => [...new Set([requestId, ...prev])]);
 

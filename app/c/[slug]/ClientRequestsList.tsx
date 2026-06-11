@@ -2,8 +2,9 @@
 
 import { FileText, RefreshCw } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
+import { toast } from "sonner";
 
-import { Badge, DateTimeMeta } from "@/components/ui";
+import { Badge, Button, DateTimeMeta } from "@/components/ui";
 import { supabase } from "@/lib/supabase";
 import {
   getStoredClientRequests,
@@ -29,7 +30,16 @@ const STATUS_VARIANT: Record<ClientRequestStatus, "gold" | "blue" | "green" | "n
   cancelled: "red",
 };
 
-function RequestMiniCard({ request }: { request: StoredClientRequest }) {
+function RequestMiniCard({
+  request,
+  onCancel,
+  cancelling,
+}: {
+  request: StoredClientRequest;
+  onCancel: (request: StoredClientRequest) => void;
+  cancelling: boolean;
+}) {
+  const canCancel = request.status === "pending" || request.status === "in_progress";
   return (
     <div className="rounded-2xl border border-[var(--color-border)] bg-white/85 p-4 shadow-sm">
       <div className="flex min-w-0 items-start gap-3">
@@ -46,6 +56,17 @@ function RequestMiniCard({ request }: { request: StoredClientRequest }) {
 
           <div className="mt-3">
             <Badge variant={STATUS_VARIANT[request.status]}>{STATUS_LABEL[request.status]}</Badge>
+            {canCancel && (
+              <Button
+                type="button"
+                variant="secondary"
+                disabled={cancelling}
+                onClick={() => onCancel(request)}
+                className="mt-3 h-9 w-full text-xs"
+              >
+                {cancelling ? "Cancelando..." : "Cancelar solicitud"}
+              </Button>
+            )}
           </div>
         </div>
       </div>
@@ -55,6 +76,33 @@ function RequestMiniCard({ request }: { request: StoredClientRequest }) {
 
 export default function ClientRequestsList({ tenantId }: { tenantId: string }) {
   const [clientRequests, setClientRequests] = useState<StoredClientRequest[]>([]);
+  const [cancellingRequestId, setCancellingRequestId] = useState<string | null>(null);
+
+  const cancelClientRequest = async (request: StoredClientRequest) => {
+    setCancellingRequestId(request.requestId);
+
+    const { data, error } = await supabase.rpc("cancel_client_document_request", {
+      p_request_id: request.requestId,
+      p_tracking_token: request.trackingToken,
+    });
+
+    setCancellingRequestId(null);
+
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+
+    if (!data || data.length === 0) {
+      toast.error("No se pudo cancelar esta solicitud. Puede que ya esté lista o finalizada.");
+      return;
+    }
+
+    const next = mergeClientRequestStatusUpdates(tenantId, data);
+    setClientRequests(next);
+
+    toast.success("Solicitud cancelada");
+  };
 
   const refreshClientRequests = useCallback(async () => {
     const stored = getStoredClientRequests(tenantId);
@@ -183,7 +231,12 @@ export default function ClientRequestsList({ tenantId }: { tenantId: string }) {
 
           <div className="space-y-3">
             {activeRequests.map((request) => (
-              <RequestMiniCard key={request.requestId} request={request} />
+              <RequestMiniCard
+                key={request.requestId}
+                request={request}
+                onCancel={cancelClientRequest}
+                cancelling={cancellingRequestId === request.requestId}
+              />
             ))}
           </div>
         </div>
@@ -206,7 +259,12 @@ export default function ClientRequestsList({ tenantId }: { tenantId: string }) {
 
           <div className="mt-4 space-y-3">
             {archivedRequests.map((request) => (
-              <RequestMiniCard key={request.requestId} request={request} />
+              <RequestMiniCard
+                key={request.requestId}
+                request={request}
+                onCancel={cancelClientRequest}
+                cancelling={cancellingRequestId === request.requestId}
+              />
             ))}
           </div>
         </details>

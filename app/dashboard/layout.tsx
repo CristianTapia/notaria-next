@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import LogoutButton from "./LogoutButton";
 import AppShell from "@/components/layouts/AppShell";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import DashboardRealtimeWithSound from "./DashboardRealtimeWithSound";
 
 type RoleRow = {
   role: string;
@@ -26,6 +27,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const isTenantOwner = typedRoles.some((r) => r.role === "tenant_owner");
   const isTenantMember = typedRoles.some((r) => r.role === "tenant_member");
   const isSuperAdmin = typedRoles.some((r) => r.role === "super_admin");
+
+  const tenantRole = typedRoles.find((r) => r.role === "tenant_owner" || r.role === "tenant_member");
+  const tenantId = tenantRole?.tenant_id;
 
   if (isSuperAdmin) {
     redirect("/admin");
@@ -81,6 +85,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
       navItems={navItems}
       footer={<LogoutButton />}
     >
+      {tenantId && <DashboardRealtimeWithSound tenantId={tenantId} />}
       {children}
     </AppShell>
   );
