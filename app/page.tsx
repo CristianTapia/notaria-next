@@ -1,7 +1,5 @@
-import { supabase } from "@/lib/supabase";
+import { redirect } from "next/navigation";
 
-export default async function TestPage() {
-  const { data } = await supabase.from("tenants").select("*").limit(1);
-
-  return <pre>{JSON.stringify(data, null, 2)}</pre>;
+export default function HomePage() {
+  redirect("/login");
 }

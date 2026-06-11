@@ -44,7 +44,7 @@ export function Modal({
       />
 
       <div
-        className={`relative w-full ${SIZE_CLASS[size]} rounded-3xl border border-[var(--color-border)] bg-[var(--color-bg)] p-4 shadow-2xl sm:p-5`}
+        className={`relative w-full ${SIZE_CLASS[size]} rounded-3xl border border-[var(--color-border)] bg-white p-4 shadow-2xl sm:p-5`}
       >
         <div className={hasIcon ? "text-center" : "flex items-start justify-between gap-4"}>
           {hasIcon ? (

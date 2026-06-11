@@ -4,7 +4,7 @@ import { Plus, ListPlus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Button, FormField, Input, Modal, Select } from "@/components/ui";
+import { Button, FormField, Input, Modal, Select, Switch } from "@/components/ui";
 import { supabase } from "@/lib/supabase";
 import { fieldSchema } from "@/schemas/field";
 
@@ -23,14 +23,16 @@ export default function CreateFieldForm({ documentId, nextSortOrder }: { documen
 
   const [open, setOpen] = useState(false);
   const [label, setLabel] = useState("");
-  const [fieldType, setFieldType] = useState("text");
+  const [fieldType, setFieldType] = useState("");
   const [required, setRequired] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [placeholder, setPlaceholder] = useState("");
 
   const reset = () => {
     setLabel("");
-    setFieldType("text");
+    setFieldType("");
     setRequired(false);
+    setPlaceholder("");
   };
 
   const submit = async (e: React.FormEvent) => {
@@ -40,6 +42,7 @@ export default function CreateFieldForm({ documentId, nextSortOrder }: { documen
       label,
       fieldType,
       required,
+      placeholder,
     });
 
     if (!parsed.success) {
@@ -47,7 +50,12 @@ export default function CreateFieldForm({ documentId, nextSortOrder }: { documen
       return;
     }
 
-    const { label: cleanLabel, fieldType: cleanFieldType, required: cleanRequired } = parsed.data;
+    const {
+      label: cleanLabel,
+      fieldType: cleanFieldType,
+      required: cleanRequired,
+      placeholder: cleanPlaceholder,
+    } = parsed.data;
 
     setSaving(true);
 
@@ -57,7 +65,7 @@ export default function CreateFieldForm({ documentId, nextSortOrder }: { documen
       field_type: cleanFieldType,
       required: cleanRequired,
       sort_order: nextSortOrder,
-      placeholder: null,
+      placeholder: cleanPlaceholder || null,
       options: cleanFieldType === "select" ? ["Opción 1"] : null,
     });
 
@@ -71,7 +79,7 @@ export default function CreateFieldForm({ documentId, nextSortOrder }: { documen
     reset();
     setOpen(false);
     router.refresh();
-    toast.success("Pregunta agregada");
+    toast.success("Campo agregado");
   };
 
   return (
@@ -84,34 +92,34 @@ export default function CreateFieldForm({ documentId, nextSortOrder }: { documen
       <Modal
         open={open}
         title="Agregar campo"
-        description="Crea una nueva pregunta para este documento."
+        description="Crea un nuevo campo para este documento."
         onClose={() => {
           if (saving) return;
+          reset();
           setOpen(false);
         }}
         icon={<ListPlus className="h-6 w-6" />}
         size="md"
         disableClose={saving}
       >
-        <form onSubmit={submit} className="space-y-3">
-          <FormField label="Pregunta" required>
+        <form onSubmit={submit} className="space-y-5">
+          <FormField label="Campo" required>
             <Input
               value={label}
               onChange={(e) => setLabel(e.target.value)}
               required
               disabled={saving}
-              placeholder="Texto de la pregunta"
+              placeholder="Texto del campo"
             />
           </FormField>
 
-          <div className="flex min-w-0 flex-col gap-2 sm:flex-row">
+          <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-[minmax(0,1fr)_9rem] sm:items-end">
             <FormField label="Tipo de campo" required className="flex-1">
-              <Select
-                value={fieldType}
-                onChange={(e) => setFieldType(e.target.value)}
-                disabled={saving}
-                className="flex-1"
-              >
+              <Select value={fieldType} onChange={(e) => setFieldType(e.target.value)} disabled={saving}>
+                <option value="" disabled>
+                  Selecciona un tipo de campo
+                </option>
+
                 {FIELD_TYPES.map((type) => (
                   <option key={type.value} value={type.value}>
                     {type.label}
@@ -120,30 +128,38 @@ export default function CreateFieldForm({ documentId, nextSortOrder }: { documen
               </Select>
             </FormField>
 
-            <button
-              type="button"
-              onClick={() => setRequired((prev) => !prev)}
-              disabled={saving}
-              className={`min-h-11 rounded-lg border px-3 text-sm font-medium transition ${
-                required
-                  ? "border-[var(--color-gold)] bg-[#F5E9D6] text-[var(--color-navy)]"
-                  : "border-[var(--color-border)] bg-white text-[var(--color-muted)] hover:bg-[var(--color-cream-input)]"
-              }`}
-            >
-              Obligatoria
-            </button>
+            <div className="flex h-11 items-center justify-start sm:mb-0.5">
+              <Switch
+                checked={required}
+                disabled={saving}
+                onClick={() => setRequired((prev) => !prev)}
+                label={required ? "Obligatorio" : "Opcional"}
+              />
+            </div>
           </div>
+
+          <FormField label="Texto de ayuda">
+            <Input
+              value={placeholder}
+              onChange={(e) => setPlaceholder(e.target.value)}
+              disabled={saving}
+              placeholder="Texto de ayuda / placeholder"
+            />
+          </FormField>
 
           <div className="flex flex-col gap-2 pt-2 sm:flex-row">
             <Button type="submit" disabled={saving} className="w-full sm:w-auto">
               <Plus className="h-4 w-4" />
-              {saving ? "Agregando..." : "Agregar pregunta"}
+              {saving ? "Agregando..." : "Agregar"}
             </Button>
 
             <Button
               type="button"
               variant="secondary"
-              onClick={() => setOpen(false)}
+              onClick={() => {
+                reset();
+                setOpen(false);
+              }}
               disabled={saving}
               className="w-full sm:w-auto"
             >

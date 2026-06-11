@@ -1,4 +1,4 @@
-export function playNotificationSound(repeats = 1) {
+export function playNotificationSound(repeats = 2) {
   const playOnce = () => {
     const AudioContextClass =
       window.AudioContext ||
